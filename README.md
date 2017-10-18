@@ -30,10 +30,10 @@
     Add parameters for testing in "main" of Experiment_10_09.py
 
         (change number pool1 of synaptic AMPARs and NMDARs;
-        change the number pool 2 of exsyantpic NMDABRs;
+        change number pool 2 of exsyantpic NMDARs;
         change Beta and Cdur of NMDARs)
 
     Run the file: python Experiment_10_09_14.py
 
 ### Output:
-    All the data and folder will be saved in a different folder with name of today's date.
+    All the figures and json data will be saved in a different folder with name of today's date.
