@@ -67,7 +67,7 @@ def Glu_Stim(Pool1_num = 30, Pool2_num = 2, Beta = 0.067, Cdur = 1, Syn_w1 = 0.0
         ###########################
         # Adding AMPA
         SynAMPA.append(h.AMPA(Cell.basal[34](loc1[i])))
-        SynAMPA[-1].gmax = 0.1
+        SynAMPA[-1].gmax = 0.05
         #SynAMPA1[-1].Beta = 0.28
         nc_AMPA.append(h.NetCon(ns, SynAMPA[i]))
         nc_AMPA[-1].delay = 10 #uniform(1,20)
@@ -76,7 +76,7 @@ def Glu_Stim(Pool1_num = 30, Pool2_num = 2, Beta = 0.067, Cdur = 1, Syn_w1 = 0.0
         ###########################
         # Adding NMDA
         SynNMDA.append(h.NMDA(Cell.basal[34](loc1[i])))
-        SynNMDA[-1].gmax = 0.05
+        h.gmax_NMDA = 0.05
         SynNMDA[-1].Beta = Beta
         SynNMDA[-1].Cdur = Cdur
         nc_NMDA.append(h.NetCon(ns, SynNMDA[i]))
@@ -95,7 +95,7 @@ def Glu_Stim(Pool1_num = 30, Pool2_num = 2, Beta = 0.067, Cdur = 1, Syn_w1 = 0.0
         ###########################
         # Adding extrasyanptic NMDA
         ExNMDA.append(h.NMDA(Cell.basal[34](loc2[i])))
-        ExNMDA[-1].gmax = 0.05
+        h.gmax_NMDA = 0.05
         ExNMDA[-1].Beta = Beta
         ExNMDA[-1].Cdur = Cdur
         nc_ExNMDA.append(h.NetCon(ns, ExNMDA[i]))
@@ -147,7 +147,7 @@ def Glu_Stim(Pool1_num = 30, Pool2_num = 2, Beta = 0.067, Cdur = 1, Syn_w1 = 0.0
 
 
     timestr = time.strftime("%Y%m%d-%H%M")
-    title = "Pool1_"+ str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
+    title = "TTX_Pool1_"+ str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
     str(Beta) + "_NMDA_Cdur_"+str(Cdur)+ "_Pool1_W_" + str(Syn_w1) + \
     "_Pool2_W_" + str(Syn_w2) + "_"+ timestr
     save(title, ext="png", close=True, verbose=True)
@@ -183,12 +183,12 @@ if __name__ == "__main__":
     print("Running the model")
 
     Pool1_num = 8
-    Pool2_num = 4
+    Pool2_num = 8
 #    Syn_w1 = 0.01
 #    Syn_w2 = 0.01
 #    Beta = [0.005, 0.01, 0.03, 0.05]
 #    Cdur = [1,10]
-    weight = np.linspace(0.01, 0.5, 100)
+    weight = np.linspace(0.01, 0.5, 10)
 #    for a in ratio:
     for w in weight:
 #            for c in Beta:
