@@ -67,7 +67,7 @@ def Glu_Stim(Pool1_num = 30, Pool2_num = 2, Beta = 0.067, Cdur = 1, Syn_w1 = 0.0
         ###########################
         # Adding AMPA
         SynAMPA.append(h.AMPA(Cell.basal[34](loc1[i])))
-        SynAMPA[-1].gmax = 0.05
+        SynAMPA[-1].gmax = 0.1
         #SynAMPA1[-1].Beta = 0.28
         nc_AMPA.append(h.NetCon(ns, SynAMPA[i]))
         nc_AMPA[-1].delay = 10 #uniform(1,20)
@@ -146,8 +146,8 @@ def Glu_Stim(Pool1_num = 30, Pool2_num = 2, Beta = 0.067, Cdur = 1, Syn_w1 = 0.0
     plt.title ("Glumate Receptor Activated Plateau Potential")
 
 
-    timestr = time.strftime("%Y%m%d-%H%M")
-    title = "TTX_Pool1_"+ str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
+    timestr = time.strftime("%H%M")
+    title = "Pool1_"+ str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
     str(Beta) + "_NMDA_Cdur_"+str(Cdur)+ "_Pool1_W_" + str(Syn_w1) + \
     "_Pool2_W_" + str(Syn_w2) + "_"+ timestr
     save(title, ext="png", close=True, verbose=True)
