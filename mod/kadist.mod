@@ -1,6 +1,10 @@
 TITLE K-A channel from Klee Ficker and Heinemann
 : modified to account for Dax A Current ----------
 : M.Migliore Jun 1997
+: modified the q10 value on Oct 24, 2017
+: the original value q10 = 5 can cause big problem when temperature is 34.
+: q10 is lowered to 1 to reduce temperature sensitivity.
+
 
 UNITS {
 	(mA) = (milliamp)
@@ -30,7 +34,7 @@ PARAMETER {
 	pw=-1    (1)
 	tq=-40 (mV)
 	qq=5  (mV)
-	q10=5 
+	q10= 1 : 5   the orginal q10 value is 5, changed it to 1 on Oct 24, 2017
 	qtl=1
         nscale=1
         lscale=1
@@ -53,11 +57,11 @@ STATE {
 ASSIGNED {
 	ik (mA/cm2)
         ninf
-        linf      
+        linf
         taul   (ms)
         taun   (ms)
         gka    (mho/cm2)
-        qt     
+        qt
 }
 
 INITIAL {
@@ -66,7 +70,7 @@ INITIAL {
         l=linf
         gka = gkabar*n*l
 	ik = gka*(v-ek)
-}        
+}
 
 BREAKPOINT {
 	SOLVE states METHOD cnexp
@@ -83,21 +87,21 @@ DERIVATIVE states {
 FUNCTION alpn(v(mV)) {
 LOCAL zeta
   zeta=zetan+pw/(1+exp((v-tq)/qq))
-  alpn = exp(1.e-3*zeta*(v-vhalfn)*9.648e4 (degC/mV)/(8.315*(273.16+celsius))) 
+  alpn = exp(1.e-3*zeta*(v-vhalfn)*9.648e4 (degC/mV)/(8.315*(273.16+celsius)))
 }
 
 FUNCTION betn(v(mV)) {
 LOCAL zeta
   zeta=zetan+pw/(1+exp((v-tq)/qq))
-  betn = exp(1.e-3*zeta*gmn*(v-vhalfn)*9.648e4 (degC/mV)/(8.315*(273.16+celsius))) 
+  betn = exp(1.e-3*zeta*gmn*(v-vhalfn)*9.648e4 (degC/mV)/(8.315*(273.16+celsius)))
 }
 
 FUNCTION alpl(v(mV)) {
-  alpl = exp(1.e-3*zetal*(v-vhalfl)*9.648e4 (degC/mV)/(8.315*(273.16+celsius))) 
+  alpl = exp(1.e-3*zetal*(v-vhalfl)*9.648e4 (degC/mV)/(8.315*(273.16+celsius)))
 }
 
 FUNCTION betl(v(mV)) {
-  betl = exp(1.e-3*zetal*gml*(v-vhalfl)*9.648e4 (degC/mV)/(8.315*(273.16+celsius))) 
+  betl = exp(1.e-3*zetal*gml*(v-vhalfl)*9.648e4 (degC/mV)/(8.315*(273.16+celsius)))
 }
 LOCAL facn,facl
 
@@ -129,17 +133,3 @@ PROCEDURE rates(v (mV)) { :callable from hoc
 	if (taul<lmin/qtl) {taul=lmin/qtl}
         facl = (1 - exp(-dt/taul))
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
