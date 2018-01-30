@@ -2,6 +2,7 @@ TITLE K-A channel from Klee Ficker and Heinemann
 : modified to account for Dax A Current --- M.Migliore Jun 1997
 : modified to be used with cvode  M.Migliore 2001
 
+
 UNITS {
 	(mA) = (milliamp)
 	(mV) = (millivolt)
@@ -25,7 +26,9 @@ PARAMETER {
 	pw=-1    (1)
 	tq=-40
 	qq=5
-	q10=5
+	q10= 5: 2.3
+	: 1 :5 The orginal value is 5, changed to 2 on Nov 6, 2017 by Penny
+	: change to 2.3 on Dec 8, 2017 by Penny
 	qtl=1
 	ek
 }
@@ -46,7 +49,7 @@ STATE {
 ASSIGNED {
 	ik (mA/cm2)
         ninf
-        linf      
+        linf
         taul
         taun
         gka
@@ -70,21 +73,21 @@ BREAKPOINT {
 FUNCTION alpn(v(mV)) {
 LOCAL zeta
   zeta=zetan+pw/(1+exp((v-tq)/qq))
-  alpn = exp(1.e-3*zeta*(v-vhalfn)*9.648e4/(8.315*(273.16+celsius))) 
+  alpn = exp(1.e-3*zeta*(v-vhalfn)*9.648e4/(8.315*(273.16+celsius)))
 }
 
 FUNCTION betn(v(mV)) {
 LOCAL zeta
   zeta=zetan+pw/(1+exp((v-tq)/qq))
-  betn = exp(1.e-3*zeta*gmn*(v-vhalfn)*9.648e4/(8.315*(273.16+celsius))) 
+  betn = exp(1.e-3*zeta*gmn*(v-vhalfn)*9.648e4/(8.315*(273.16+celsius)))
 }
 
 FUNCTION alpl(v(mV)) {
-  alpl = exp(1.e-3*zetal*(v-vhalfl)*9.648e4/(8.315*(273.16+celsius))) 
+  alpl = exp(1.e-3*zetal*(v-vhalfl)*9.648e4/(8.315*(273.16+celsius)))
 }
 
 FUNCTION betl(v(mV)) {
-  betl = exp(1.e-3*zetal*gml*(v-vhalfl)*9.648e4/(8.315*(273.16+celsius))) 
+  betl = exp(1.e-3*zetal*gml*(v-vhalfl)*9.648e4/(8.315*(273.16+celsius)))
 }
 
 DERIVATIVE states {     : exact when v held constant; integrates over dt step
@@ -105,17 +108,3 @@ PROCEDURE rates(v (mV)) { :callable from hoc
 	taul = 0.26*(v+50)/qtl
 	if (taul<lmin/qtl) {taul=lmin/qtl}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

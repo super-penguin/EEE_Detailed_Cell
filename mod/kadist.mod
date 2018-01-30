@@ -34,7 +34,9 @@ PARAMETER {
 	pw=-1    (1)
 	tq=-40 (mV)
 	qq=5  (mV)
-	q10= 1 : 5   the orginal q10 value is 5, changed it to 1 on Oct 24, 2017
+	q10= 2.3
+	: 1 : 5   the orginal q10 value is 5, changed it to 1 on Oct 24, 2017
+	: change to 2.3 on Dec 8, 2017 by Penny
 	qtl=1
         nscale=1
         lscale=1

@@ -6,7 +6,7 @@ COMMENT
 
 na.mod
 
-Sodium channel, Hodgkin-Huxley style kinetics.  
+Sodium channel, Hodgkin-Huxley style kinetics.
 
 Kinetics were fit to data from Huguenard et al. (1988) and Hamill et
 al. (1991)
@@ -47,26 +47,26 @@ PARAMETER {
 	gbar = 1000   	(pS/um2)	: 0.12 mho/cm2
 :	vshift = -10	(mV)		: voltage shift (affects all)
 	vshift = 0	(mV)		: voltage shift (affects all)
-								
-	tha  = -35	(mV)		: v 1/2 for act		(-42)
-	qa   = 9	(mV)		: act slope		
-	Ra   = 0.182	(/ms)		: open (v)		
-	Rb   = 0.124	(/ms)		: close (v)		
 
-:	thi1  = -50	(mV)		: v 1/2 for inact 	
+	tha  = -35	(mV)		: v 1/2 for act		(-42)
+	qa   = 9	(mV)		: act slope
+	Ra   = 0.182	(/ms)		: open (v)
+	Rb   = 0.124	(/ms)		: close (v)
+
+:	thi1  = -50	(mV)		: v 1/2 for inact
       thi1 = -65 (mV)
-:	thi2  = -75	(mV)		: v 1/2 for inact 	
+:	thi2  = -75	(mV)		: v 1/2 for inact
       thi2 = -65 (mV)
 	qi   = 6	(mV)	        : inact tau slope
-:	thinf  = -65	(mV)		: inact inf slope	
-	thinf  = -65	(mV)		: inact inf slope	
+:	thinf  = -65	(mV)		: inact inf slope
+	thinf  = -65	(mV)		: inact inf slope
 	qinf  = 6.2	(mV)		: inact inf slope
-:	Rg   = 0.0091	(/ms)		: inact (v)	
-	Rg   = 0.02	(/ms)		: inact (v)	
-	Rd   = 0.024	(/ms)		: inact recov (v) 
+:	Rg   = 0.0091	(/ms)		: inact (v)
+	Rg   = 0.02	(/ms)		: inact (v)
+	Rd   = 0.024	(/ms)		: inact recov (v)
 
-	temp = 23	(degC)		: original temp 
-	q10  = 2.3			: temperature sensitivity
+	temp = 23	(degC)		: original temp
+	q10 = 2.3			: temperature sensitivity
 
 	v 		(mV)
 	dt		(ms)
@@ -81,7 +81,7 @@ UNITS {
 	(mV) = (millivolt)
 	(pS) = (picosiemens)
 	(um) = (micron)
-} 
+}
 
 ASSIGNED {
 	ina 		(mA/cm2)
@@ -91,11 +91,11 @@ ASSIGNED {
 	mtau (ms)	htau (ms)
 	tadj
 }
- 
+
 
 STATE { m h }
 
-INITIAL { 
+INITIAL {
 	trates(v+vshift)
 	m = minf
 	h = hinf
@@ -106,22 +106,22 @@ BREAKPOINT {
 :        gna = tadj*gbar*m*m*m*h : originally included tadj
         gna = gbar*m*m*m*h
 	ina = (1e-4) * gna * (v - ena)
-} 
+}
 
-LOCAL mexp, hexp 
+LOCAL mexp, hexp
 
-DERIVATIVE states {   :Computes state variables m, h, and n 
+DERIVATIVE states {   :Computes state variables m, h, and n
         trates(v+vshift)      :             at the current v and dt.
         m' =  (minf-m)/mtau
         h' =  (hinf-h)/htau
 }
 
-PROCEDURE trates(v) {  
-                      
-        
+PROCEDURE trates(v) {
+
+
         TABLE minf,  hinf, mtau, htau
 	DEPEND  celsius, temp, Ra, Rb, Rd, Rg, tha, thi1, thi2, qa, qi, qinf
-	
+
 	FROM vmin TO vmax WITH 199
 
 	rates(v): not consistently executed from here if usetable == 1
@@ -133,7 +133,7 @@ PROCEDURE trates(v) {
 }
 
 
-PROCEDURE rates(vm) {  
+PROCEDURE rates(vm) {
         LOCAL  a, b
 
 	a = trap0(vm,tha,Ra,qa)
@@ -144,7 +144,7 @@ PROCEDURE rates(vm) {
 	mtau = 1/tadj/(a+b)
 	minf = a/(a+b)
 
-		:"h" inactivation 
+		:"h" inactivation
 
 	a = trap0(-vm,-thi1,Rd,qi)
 	b = trap0(vm,thi2,Rg,qi)
@@ -160,8 +160,4 @@ FUNCTION trap0(v,th,a,q) {
 	} else {
 	        trap0 = a * q
  	}
-}	
-
-
-
-
+}

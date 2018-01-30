@@ -1,22 +1,25 @@
 ## Test glutamate evoked plateau potentials in a detailed model (CA229 cell)
 
-### Updated on Oct. 18, 2017
+### Updated on Jan. 18, 2018
     Both synaptic AMPARs/NMDARs and exsynaptic NMDARs are activated by one
     NetStim.
-    No randomness in receptor activation time yet.
-    gmax for AMPA is 0.1nS; gmax for NMDA is 0.05nS.
+    Synaptic AMPARs/NMDARs get activated 10~15 ms after the stimulation.
+    exsynaptic NMDARs get activated 12~20 ms after the stimulation.
+    gmax for AMPA is 0.05nS; gmax for NMDA is 0.05nS.
 
 
 ### Files:
-    1. Experiment_10_09.py    - Code to add AMPA and NMDA receptors
+    1. Experiment_no_spines.py    - Code to add AMPA and NMDA receptors
 
-    2. CA229.hoc      - hoc file with the Geometry and 3d shape
+    2. CA229.py   - python class with all the cell membrane properties
+            (the Geometry and 3d shape is defined in this python class as well
+                --- for better usage in network or NetPyNE)
 
-    3. CA229_PFC.py   - python class with all the cell membrane properties (CA229.hoc will be loaded by this file)
+    3. compile.py     - compile all the mod files in folder: mod
 
-    4. compile.py     - compile all the mod files in folder: mod
+    4. Analysis_for_trace_location.py   - Plot traces at different location on soma and basal dendrites
 
-    5. Analysis_for_trace_location.py   - Plot traces at different location on soma and basal dendrites
+    5. Analysis_for_plateau_duration.py  - Generate data analysis files and figures
 
     6. analysis_utils.py   - analysis of plateau duration, ISI and number of spikes
 
@@ -27,13 +30,13 @@
 
     Compile mod files: python compile.py
 
-    Add parameters for testing in "main" of Experiment_10_09.py
+    Add parameters for testing in "main" of Experiment_no_spines.py
 
         (change number pool1 of synaptic AMPARs and NMDARs;
         change number pool 2 of exsyantpic NMDARs;
         change Beta and Cdur of NMDARs)
 
-    Run the file: python Experiment_10_09_14.py
+    Run the file: python Experiment_no_spines.py
 
 ### Output:
     All the figures and json data will be saved in a different folder with name of today's date.
