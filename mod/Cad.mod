@@ -1,12 +1,12 @@
 
 TITLE decay of internal calcium concentration
 :
-: Internal calcium concentration calculated from calcium currents 
+: Internal calcium concentration calculated from calcium currents
 : and buffered by endogenous buffer and extrusion mechanism.
 :
 : Uses differential equations from Helmchen 1996
 :dCa/dt = (dCa_T delta_t - (gamma*(dCa - Ca_rest)))/kb
-: or dCa/dt = (dCa_T delta_t)/kb - (dCa - Ca_rest)/taur 
+: or dCa/dt = (dCa_T delta_t)/kb - (dCa - Ca_rest)/taur
 : with  taur = kb/gamma
 :
 : to add exogenous buffer kb = 1+kendo+kexo
@@ -18,6 +18,7 @@ TITLE decay of internal calcium concentration
 : Units checked using "modlunit" -> factor 10000 needed in ca entry
 :
 : Written by B Kampa May 2006
+
 
 INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}
 
@@ -45,7 +46,7 @@ PARAMETER {
 	kb 	= 20			: buffer ratio from Sabatini 2002
 	cainf	= 100e-6(mM)	: will be adjusted during init phase
 	cai		(mM)
-	gamma =1.2	(1/ms)
+	gamma = 1.2	(1/ms)    : Tried 0.1 and 0.6 on Jan 31 by Penny, almost no difference on TTX condition
 }
 
 STATE {
@@ -61,12 +62,12 @@ ASSIGNED {
 	ica		(mA/cm2)
 	drive_channel	(mM/ms)
 }
-	
+
 BREAKPOINT {
 	SOLVE state METHOD euler
 }
 
-DERIVATIVE state { 
+DERIVATIVE state {
 	depth = diam/4
 	drive_channel =  - (10000) * ica / (2 * FARADAY * depth)
 	if (drive_channel <= 0.) { drive_channel = 0. }	: cannot pump inward
@@ -74,11 +75,3 @@ DERIVATIVE state {
 	ca' = (drive_channel/kb) + ((cainf-ca)/taur)
 	cai = ca
 }
-
-
-
-
-
-
-
-

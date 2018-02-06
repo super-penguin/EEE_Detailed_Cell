@@ -23,8 +23,10 @@ def random_floats(low, high, size):
 ################### Test the ratio of different repceptors
 
 
-def Glu_Stim(TTX = False, Pool1_num = 9, Pool2_num = 9, Beta = 0.067,
-Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
+def Glu_Stim(Bnum = 34, TTX = False,
+Pool1_num = 9, Pool2_num = 9, Beta = 0.067, Cdur = 1,
+Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
+
     """
     Model the Glumate Stimulation.
     Model the Receptors in 2 pools:
@@ -33,6 +35,7 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
 
     Parameters:
     -----------
+    Bnum: the number of basal branch to explore
     TTX: True or False.
         True: setting all the calcium channel conductance to 0.
         False: default
@@ -48,21 +51,23 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
         Figures: recording from soma and 3 different locations from basal dendrites
         json: soma and dendritc voltage recording and parameters info
     """
-    ###########################################
     Cell = CA229()
     timestr = time.strftime("%Y%m%d-%H%M")
     data = time.strftime("%m_%d")
-    directory = 'Data_' + data +'/'
-#    Cell.no_ca()
+
     if (TTX == True):
         Cell.TTX()
-        title = "TTX_Pool1_"+ str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
-            str(Beta) + "_NMDA_Cdur_"+str(Cdur)+ "_Pool1_W_" + str(Syn_w1) + \
-            "_Pool2_W_" + str(Syn_w2) + "_"+ timestr
+        directory = 'Data_' + data +'/' + "B" + str(Bnum) + "/Loc" + str(Loc[0]) + "_" + str(Loc[1]) + "/TTX/"
+        title =  "TTX_Pool1_"+ \
+        str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
+        str(Beta) + "_NMDA_Cdur_" + str(Cdur) + "_Pool1_W_" + str(Syn_w1) + \
+        "_Pool2_W_" + str(Syn_w2) + "_"+ timestr
     else:
-        title = "Pool1_"+ str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
-            str(Beta) + "_NMDA_Cdur_"+str(Cdur)+ "_Pool1_W_" + str(Syn_w1) + \
-            "_Pool2_W_" + str(Syn_w2) + "_"+ timestr
+        directory = 'Data_' + data +'/' + "B" + str(Bnum) + "/Loc" + str(Loc[0]) + "_" + str(Loc[1]) + "/N/"
+        title = "Pool1_"+ \
+        str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
+        str(Beta) + "_NMDA_Cdur_" + str(Cdur) + "_Pool1_W_" + str(Syn_w1) + \
+        "_Pool2_W_" + str(Syn_w2) + "_"+ timestr
 
     ###########################################
     # Syanptic weights
@@ -95,7 +100,7 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
 #    loc1 = [0.5, 0.6, 0.7]*3
     #delay1 = [10, 13, 13]*3
 #    delay1 = random_floats(10, 20, 3) + random_floats(13, 23, 6)
-    delay1=random_floats(0, 8, Pool1_num)
+    delay1=random_floats(10, 15, Pool1_num)
     ns = h.NetStim()
     ns.interval = 20
     ns.number = 1
@@ -105,7 +110,7 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     for i in range(Pool1_num):
         ###########################
         # Adding AMPA
-        SynAMPA.append(h.AMPA(Cell.basal[34](loc1[i])))
+        SynAMPA.append(h.AMPA(Cell.basal[Bnum](loc1[i])))
         SynAMPA[-1].gmax = 0.05
         #SynAMPA1[-1].Beta = 0.28
         nc_AMPA.append(h.NetCon(ns, SynAMPA[i]))
@@ -114,7 +119,7 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
         #nc_AMPA[-1].threshold = -20
         ###########################
         #Adding NMDA
-        SynNMDA.append(h.NMDA(Cell.basal[34](loc1[i])))
+        SynNMDA.append(h.NMDA(Cell.basal[Bnum](loc1[i])))
         SynNMDA[-1].gmax = 0.05
         SynNMDA[-1].Beta = Beta
         SynNMDA[-1].Cdur = Cdur
@@ -129,11 +134,11 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     nc_ExNMDA = []
 
     loc2 = list(np.linspace(Loc[0], Loc[1], Pool2_num))
-    delay2 = list(np.linspace(5, 10, Pool2_num))
+    delay2 = list(np.linspace(12, 20, Pool2_num))
     for i in range(Pool2_num):
         ###########################
         # Adding extrasyanptic NMDA
-        ExNMDA.append(h.NMDA(Cell.basal[34](loc2[i])))
+        ExNMDA.append(h.NMDA(Cell.basal[Bnum](loc2[i])))
         ExNMDA[-1].gmax = 0.05
         ExNMDA[-1].Beta = Beta
         ExNMDA[-1].Cdur = Cdur
@@ -152,9 +157,9 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     v_vec_dend3 = h.Vector()
 
     v_vec_soma.record(Cell.soma[2](0.5)._ref_v)
-    v_vec_dend1.record(Cell.basal[34](0.8)._ref_v)
-    v_vec_dend2.record(Cell.basal[34](0.5)._ref_v)
-    v_vec_dend3.record(Cell.basal[34](0.3)._ref_v)
+    v_vec_dend1.record(Cell.basal[Bnum](0.8)._ref_v)
+    v_vec_dend2.record(Cell.basal[Bnum](0.5)._ref_v)
+    v_vec_dend3.record(Cell.basal[Bnum](0.3)._ref_v)
 
 
     ###########################################
@@ -170,9 +175,9 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
 #    pdb.set_trace()   #Debugging
     plt.figure(figsize = (16, 6), dpi = 100)
     plt.plot(t_vec, v_vec_soma, label = 'soma(0.5)', color = 'black')
-    plt.plot(t_vec, v_vec_dend1, label = 'bdend[34](0.8)', color = 'red')
-    plt.plot(t_vec, v_vec_dend2, label = 'Basal[34](0.5)', color = 'blue')
-    plt.plot(t_vec, v_vec_dend3, label = 'Basal[34](0.3)', color = 'green')
+    plt.plot(t_vec, v_vec_dend1, label = 'bdend['+str(Bnum)+'](0.8)', color = 'red')
+    plt.plot(t_vec, v_vec_dend2, label = 'Basal['+str(Bnum)+'](0.5)', color = 'blue')
+    plt.plot(t_vec, v_vec_dend3, label = 'Basal['+str(Bnum)+'](0.3)', color = 'green')
     plt.ylim([-90, 60])
     plt.xlim([0, 600])
     plt.legend(loc = 'best')
@@ -200,9 +205,9 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
 
     data['recording']['time'] = list(t_vec)
     data['recording']['soma']['voltage'] = list(v_vec_soma)
-    data['recording']['basal_34']['voltage_0.8'] = list(v_vec_dend1)
-    data['recording']['basal_34']['voltage_0.5'] = list(v_vec_dend2)
-    data['recording']['basal_34']['voltage_0.3'] = list(v_vec_dend3)
+    data['recording']['basal']['voltage_0.8'] = list(v_vec_dend1)
+    data['recording']['basal']['voltage_0.5'] = list(v_vec_dend2)
+    data['recording']['basal']['voltage_0.3'] = list(v_vec_dend3)
 
     savejson(data, title, directory, ext = "json", verbose = False)
 
@@ -210,22 +215,18 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
 if __name__ == "__main__":
     print("Running the model")
     start_time = time.time()
-
-    Pool_num = 10  #[6, 8, 10, 15] 8 and 10 are better
-    loc = [0.2, 0.6]
-    weight = [0.2] #[0.05, 0.1, 0.3, 0.5, 0.8]
-    # [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]
-    #[0.05, 0.1, 0.3, 0.5, 0.8]
-    # [0.7, 0.8, 0.9]
-
+    Pool_num = 8
     # weight = [0.05, 0.055, 0.06, 0.065, 0.07, 0.075, 0.08, 0.085, 0.09, 0.095, 0.1,
     # 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+    weight = [0.2]
+    basal_num =[15] #[15, 34, 14, 22, 25, 31] #15, 34
 
-    # weight = [0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05, 0.055, 0.06, 0.065, 0.07, 0.075, 0.08, 0.085, 0.09, 0.095,
-    # 0.1, 0.11, 0.12, 0.13, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    for w in weight:
-        Glu_Stim(False, Pool_num, Pool_num, 0.02, 1, w, w, loc)
-    for w in weight:
-        Glu_Stim(True, Pool_num, Pool_num, 0.02, 1, w, w, loc)
+    loc = [[0.6,0.7]]#[[0.1, 0.2], [0.2, 0.3], [0.3, 0.4], [0.4,0.5], [0.5, 0.6], [0.7, 0.8], [0.8, 0.9]]
+    for b in basal_num:
+        for l in loc:
+            for w in weight:
+                Glu_Stim(b, False, Pool_num, Pool_num, 0.02, 1, w, w, l)
+                Glu_Stim(b, True, Pool_num, Pool_num, 0.02, 1, w, w, l)
+
     print("Finished.")
     print("--- %s seconds ---" % (time.time() - start_time))

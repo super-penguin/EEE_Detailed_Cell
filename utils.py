@@ -1,14 +1,12 @@
 import os
 import matplotlib.pyplot as plt
 import json
+import datetime
 import time
-import numpy as np
 
-timestr = time.strftime("%m_%d")
-print timestr
 ######################################################
 
-def save(path, ext = 'png', close = True, verbose = True):
+def save(path, directory, ext = 'png', close = True, verbose = True):
     """Save a figure from pyplot.
 
     Parameters:
@@ -31,9 +29,8 @@ def save(path, ext = 'png', close = True, verbose = True):
         saved.
         """
     # Extract the directory and filename from the given path
-    timestr = time.strftime("%m_%d")
-    directory = 'Data_' + timestr +'/'
-
+    # timestr = time.strftime("%m_%d")
+    # directory = 'Data_' + timestr +'/'
     filename = "%s.%s" % (os.path.split(path)[1], ext)
     if directory == '':
         directory = '.'
@@ -68,9 +65,10 @@ class Vividict(dict):
 
 ######################################################
 
-def savejson(data, path, ext = 'json', verbose = False):
-    timestr = time.strftime("%m_%d")
-    directory = 'Data_' + timestr +'/'
+def savejson(data, path, directory, ext = 'json', verbose = False):
+    """ Save data to json for analysis. """
+    # timestr = time.strftime("%m_%d")
+    # directory = 'Data_' + timestr +'/'
     filename = "%s.%s" % (os.path.split(path)[1], ext)
     if directory == '':
         directory = '.'
@@ -85,7 +83,7 @@ def savejson(data, path, ext = 'json', verbose = False):
     if verbose:
         print ("Saving data to '%s'..." % savepath)
 
-    # Actually save data to json
+    # Save data to json
 
     jsondata = json.dumps(data)
     fd = open(savepath, 'w')
@@ -94,20 +92,3 @@ def savejson(data, path, ext = 'json', verbose = False):
 
     if verbose:
         print ("Done")
-
-
-######################################################
-# Random Float number generator
-def random_floats(low, high, size):
-    """ Generate a list of random floats
-        Parameters:
-        -----------
-        low: the lower bound of the random number
-        high: the upper bound of the random number
-        size: the size of random floats list
-
-        Output:
-        -----------
-        A list of random float numbers
-    """
-    return [np.random.uniform(low, high) for _ in xrange(size)]

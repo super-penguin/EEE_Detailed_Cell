@@ -282,6 +282,18 @@ def meas_platamp(data, dt = 0.025):
         idx = data.index(max(data)) + int(spikegap/dt)
         platamp = data[idx] - baseline
         ISI = 0
+    # elif spike_num == 2:
+    #     ISI, spike_mvalue = IST_spikes(data, dt)
+    #     spikes = get_EPSPs(data, 12, dt)
+    #     if len(spikes) > spike_num:
+    #         idx1 = int(round((spikes[1][0])/dt))
+    #         idx2 = int(round((spikes[2][0])/dt))
+    #         spike_mvalue = min(data[idx1:idx2])
+    #     # else:
+    #     #     spikegap = 5 # ms to skip after spike
+    #     #     idx = int(round((spikes[1][0])/dt)) + int(spikegap/dt)
+    #     #     spike_mvalue = data[idx]
+    #     platamp = spike_mvalue - baseline
     else:
         ISI, spike_mvalue = IST_spikes(data, dt)
         # platamp = 0
@@ -289,6 +301,18 @@ def meas_platamp(data, dt = 0.025):
 #    platamp = np.mean([val - baseline for val in above])
     return ISI , platamp
 
+#test = [-2,-1, 0, 3, 5, 7, 8,7, 5, 4,4, 1,1,0,-1]
+def TTX_platamp(data):
+    baseline = np.mean(data[500:2000])
+    stable = data[2000:]
+    above = [idx for idx, val in enumerate(stable) if val > (baseline+10)]
+    if len(above) <= 10:
+        platamp = max(stable) - baseline
+    else:
+        idx1 = above[0]
+        idx2 = above[-1]
+        platamp = stable[int(0.75*idx2 + 0.25*idx1)] - baseline
+    return platamp
 #####################################
 # Joe's code on plateau amp measurement when there is only one spike
 # def meas_trace_plat_amp(trace, time=None, recstep=recstep, syntime=syntime,

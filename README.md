@@ -9,7 +9,10 @@
 
 
 ### Files:
-    1. Experiment_no_spines.py    - Code to add AMPA and NMDA receptors
+    1. Experiment_no_spines.py    
+        - Code to add AMPA and NMDA receptors on basal[34]
+        - It will generate figures and json files to store the voltage traces
+        - Modify the parameters in "__main__" to choose the simulation
 
     2. CA229.py   - python class with all the cell membrane properties
             (the Geometry and 3d shape is defined in this python class as well
@@ -23,20 +26,27 @@
 
     6. analysis_utils.py   - analysis of plateau duration, ISI and number of spikes
 
-    7. utils.py    - to save figures and simulation results
+    7. utils.py    - to save figures and simulation results in a folder with name of today's date
+
+    8. Experiment_new.py
+        - batch to explore the stimulation distance effect on multiple basal branches
+        - It will generate figures and json files to store the voltage traces
+        - Modify the parameters in "__main__" to choose the simulation
 
 
 ### Instruction:
 
     Compile mod files: python compile.py
 
-    Add parameters for testing in "main" of Experiment_no_spines.py
+    Add parameters for testing in "main" of Experiment_no_spines.py or Experiment_new.py
 
         (change number pool1 of synaptic AMPARs and NMDARs;
         change number pool 2 of exsyantpic NMDARs;
-        change Beta and Cdur of NMDARs)
+        change Beta and Cdur of NMDARs;
+        change of stimulation location;
+        change of syanptic weights;)
 
-    Run the file: python Experiment_no_spines.py
+    Run the file: python Experiment_no_spines.py or Experiment_new.py
 
 ### Output:
     All the figures and json data will be saved in a different folder with name of today's date.

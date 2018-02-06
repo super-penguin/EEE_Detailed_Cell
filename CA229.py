@@ -19,19 +19,19 @@ from math import sqrt, pi, log, exp
 # Parameters
 #########################################
 # Cell passive properties
-global_Ra=90
+global_Ra = 90
 spineFACTOR = 1.5
 somaRm = 1000/0.04
 dendRm = somaRm/spineFACTOR
 somaCm = 1
 dendCm = somaCm*spineFACTOR
 spinedist = 50 # distance at which spines start
-Vk = -105 # -80
-VNa = 60 #55 # 60
-pasVm = -85 #-89 #-90 #-65
+Vk = -95 # -100 #-105 # -80
+VNa = 65 #60 #65 #42 #60 # # 45 #60 #55 # 60
+pasVm = -80 #-80 #-85 #-89 #-90 #-65
 
 # Specify cell biophysics
-somaNa = 900  # [pS/um2]
+somaNa = 150 # 900  # [pS/um2]
 axonNa = 5000  # [pS/um2]
 basalNa = 150  # [pS/um2]
 mNa = 0.5  # decrease in sodium channel conductance in basal dendrites [pS/um2/um]
@@ -49,16 +49,22 @@ mgkaratio = 1./300 # linear drop in KAP portion, 1 at soma
 apicalKA = 300 # apical total GKA conductance
 gkamax = 2000  # pS/um2
 
-somaCa = 10 # total calcium channel conductance density of soma [pS/um^2]
-dendCa = 2 # dendritic total calcium conductance density
-cadist = 30  # dendritic calcium channel conductance equals that of soma up until this distance
-gcaratio = 0.2 #portion of gHVA to gHVA+gIT total, 1 is all HVA, 0 is all IT#
+somaCa = 0.5 # total calcium channel conductance density of soma [pS/um^2]
+# This value is original 2, set to 1 and 0.5 for better match with TTX trace
+dendCa = 0.4 # dendritic total calcium conductance density
+SomaCaT = 1 # 6 #1
+# This value is original 8, set to 4,2,1 or 0 for better match with TTX trace
+dendCaT = 1.6 #0.5
+cadistB = 30  # dendritic calcium channel conductance equals that of soma up until this distance
+cadistA = 30
+#gcaratio = 0.2 #portion of gHVA to gHVA+gIT total, 1 is all HVA, 0 is all IT#
 gkl = 0.005
 ILdist = 15
 
 #############kBK.mod
-kBK_gpeak = 7.67842640257e-05 # original value of 268e-4 too high for this model
-kBK_caVhminShift = 45.0 # shift upwards to get lower effect on subthreshold
+kBK_gpeak = 2.68e-4 #2.68e-4 #7.67842640257e-05 # Tried 2.68e-4 # original value of 268e-4 too high for this model
+# 7.67842640257e-05 or 6.68e-4 both works, can change it based on the interspike invervals we are aiming for
+kBK_caVhminShift = 45 #50 #45.0 # shift upwards to get lower effect on subthreshold
 
 
 #########################################
@@ -83,8 +89,8 @@ class CA229:
     """
     def __init__(self):
         self.create_cell()
-        self.add_axon()
         self.optimize_nseg()
+        self.add_axon()
         self.add_all()
         self.addsomachan()
         self.addapicalchan()
@@ -98,6 +104,9 @@ class CA229:
         self.add_ih()
         self.add_CaK()
 
+    ###################
+    # Set up nseg number
+    ###################
     def geom_nseg (self):
         # local freq, d_lambda, before, after, tmp
         # these are reasonable values for most models
@@ -140,20 +149,7 @@ class CA229:
         """
         Set up nseg
         """
-        # Set up Ra and cm first, since the nseg calculation depends on the value of Ra and cm
-        for sec in self.all:
-            sec.Ra = global_Ra
-            sec.cm = 1
-
-        self.geom_nseg()
-
-        for sec in self.all:
-            sec.insert('vmax')
-
-    def add_axon(self):
-        """
-        Set up the SectionLists and temporal axon branch.
-        """
+        # Set up sectionList - easy to modify properties
         self.all = h.SectionList()
         self.all_no_axon = h.SectionList()
         for section in self.soma:
@@ -173,8 +169,38 @@ class CA229:
         for section in self.basals:
             self.all_no_axon.append(sec = section)
 
+        for sec in self.all:
+            # Set up Ra and cm first, since the nseg calculation depends on the value of Ra and cm
+            sec.Ra = global_Ra
+            sec.cm = 1
+        # give each compartment segment number
+        self.geom_nseg()
+
+    ###################
+    # Reset axon length
+    ###################
+    def add_axon(self):
+        """
+        Set up the SectionLists and temporal axon branch.
+        """
+        self.basal[16].L = 200
+        self.basal[16].nseg = 15
+        h.distance(0,0.5,sec=self.soma[0])
+        for seg in self.basal[16].allseg():
+            dist = h.distance(seg.x, sec=self.basal[16])
+            if (dist <= 15):
+                self.basal[16](seg.x).diam = 1.725
+            elif (dist > 15 and dist<= 30):
+                self.basal[16](seg.x).diam = 1.119
+            else:
+                self.basal[16](seg.x).diam = 0.96
+
+    ###################
+    # Add basic properties
+    ###################
     def add_all(self):
         for sec in self.all:
+            sec.insert('vmax')
             sec.insert('pas')
             sec.e_pas = pasVm
             sec.insert('na')
@@ -205,7 +231,9 @@ class CA229:
             sec.insert('cad')
             h.taur_cad = 100
 
-
+    ###################
+    # Set up properties only in soma
+    ###################
     def addsomachan(self):
         for sec in self.soma:
             sec.cm = somaCm
@@ -218,14 +246,23 @@ class CA229:
             #     h.ion_style("ca_ion", 0, 1, 0, 0, 0)
             #     h.vshift_ca = 10
 
+    ###################
+    # Set up properties in apical dendrites
+    ###################
     def addapicalchan(self):
         for sec in self.apical:
             sec.insert('kad')
 
+    ###################
+    # Set up properties in basal dendrites
+    ###################
     def addbasalchan(self):
         for sec in self.basals:
             sec.insert('kad')
 
+    ###################
+    # Set up properties only in axon
+    ###################
     def addaxonchan(self):
         for sec in self.axon:
             sec.cm = somaCm
@@ -265,7 +302,13 @@ class CA229:
                 sec(seg.x).gbar_na = gNalin
 
         for sec in self.axon:
-            sec.gbar_na = axonNa
+            h.distance(0, 0.5, sec = self.soma[0])
+            for seg in sec.allseg():
+                dist = h.distance(seg.x, sec = sec)
+                if (dist >= 50 and dist <= 100):
+                    sec(seg.x).gbar_na = axonNa
+                else:
+                    sec(seg.x).gbar_na = somaNa
 
         for sec in self.apical:
             sec.gbar_na = apicalNa
@@ -341,30 +384,30 @@ class CA229:
 #########################################
     def distCa(self):
         for sec in self.soma:
-            sec.gbar_ca = somaCa * gcaratio
-            sec.gbar_it = somaCa *(1-gcaratio)/1e4
+            sec.gbar_ca = somaCa
+            sec.gbar_it = SomaCaT/1e4
 
         for sec in self.basals:
             h.distance(0,0.5,sec = self.soma[0])
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec = sec)
-                if (dist > cadist):
-                    sec(seg.x).gbar_ca = dendCa * gcaratio
-                    sec(seg.x).gbar_it = dendCa * (1-gcaratio)/1e4
+                if (dist > cadistB):
+                    sec(seg.x).gbar_ca = dendCa
+                    sec(seg.x).gbar_it = dendCaT/1e4
                 else:
-                    sec(seg.x).gbar_ca = somaCa * gcaratio
-                    sec(seg.x).gbar_it = somaCa * (1-gcaratio)/1e4
+                    sec(seg.x).gbar_ca = somaCa
+                    sec(seg.x).gbar_it = SomaCaT/1e4
 
         for sec in self.apical:
             h.distance(0,0.5,sec = self.soma[0])
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec=sec)
-                if (dist > cadist):
-                    sec(seg.x).gbar_ca = dendCa * gcaratio
-                    sec(seg.x).gbar_it = dendCa * (1-gcaratio)/1e4
+                if (dist > cadistA):
+                    sec(seg.x).gbar_ca = dendCa
+                    sec(seg.x).gbar_it = dendCaT/1e4
                 else:
-                    sec(seg.x).gbar_ca = somaCa * gcaratio
-                    sec(seg.x).gbar_it = somaCa * (1-gcaratio)/1e4
+                    sec(seg.x).gbar_ca = somaCa
+                    sec(seg.x).gbar_it = SomaCaT/1e4
 
 #########################################
 # Distribution of spines on dendrites (This should be optimized!!!)
