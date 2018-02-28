@@ -503,6 +503,8 @@ class CA229:
         for sec in self.basals:
             sec.gbar_ca = 0
             sec.gbar_it = 0
+
+
 #########################################
 # 3D geometry of the cell
 #########################################
@@ -2040,3 +2042,10 @@ class CA229:
 
 
         # Set up the geom_nseg
+
+############################################
+# Function for importing cell into NetPyNE
+############################################
+def MakeCA229():
+    cell = CA229()
+    return cell
