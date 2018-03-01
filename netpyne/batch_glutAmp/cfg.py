@@ -74,8 +74,8 @@ cfg.analysis['plotTraces'] = {'include': ['all'], 'oneFigPer': 'cell', 'saveFig'
 # Sodium and potassium conductance scaling
 #cfg.dendNaScale = 1.0 # Scales dendritic Na conductance
 #cfg.dendKScale  = 1.0 # Scales dendritic K  conductance
-#cfg.allNaScale  = 1.0 # Scales all Na conductances (overrides dendNaScale if not commented)
-#cfg.allKScale   = 1.0 # Scales all K  conductances (overrides dendKScale  if not commented)
+cfg.allNaScale  = 0.0 # Scales all Na conductances (overrides dendNaScale if not commented)
+cfg.allKScale   = 1.0 # Scales all K  conductances (overrides dendKScale  if not commented)
 
 # DMS NMDA params
 cfg.NMDAAlphaScale = 1.0 # Scales original value of 4.0
@@ -86,6 +86,7 @@ cfg.NMDAgmax       = 0.05
 cfg.ratioAMPANMDA  = 2.0
 
 # glutamate stim parameters
+cfg.synTime           = 100.0
 cfg.numSyns           = 9
 cfg.numExSyns         = 9
 cfg.glutAmp           = 0.2
@@ -112,9 +113,9 @@ cfg.durIClamp1    = 2.0 # 1.0
 ###############################################################################
 cfg.addNetStim = True
 
-cfg.NetStimSyn = {'pop': ['eeeD'], 'loc': [cfg.synLocStart, cfg.synLocStart + cfg.synLocSpread], 'sec': 'basal_34', 'synMech': ['NMDA','AMPA'], 'start': 100, 'interval': 1000, 'noise': 0.0, 'number': 1, 'weight': cfg.glutAmp, 'delay': cfg.synDelay}
+cfg.NetStimSyn = {'pop': ['eeeD'], 'loc': [cfg.synLocStart, cfg.synLocStart + cfg.synLocSpread], 'sec': 'basal_34', 'synMech': ['NMDA','AMPA'], 'start': cfg.synTime, 'interval': 1000, 'noise': 0.0, 'number': 1, 'weight': cfg.glutAmp, 'delay': cfg.synDelay}
 
-cfg.NetStimExSyn = {'pop': ['eeeD'], 'loc': [cfg.synLocStart, cfg.synLocStart + cfg.synLocSpread], 'sec': 'basal_34', 'synMech': ['NMDA'], 'start': 100, 'interval': 1000, 'noise': 0.0, 'number': 1, 'weight': cfg.glutAmp * cfg.glutAmpExSynScale, 'delay': cfg.exSynDelay}
+cfg.NetStimExSyn = {'pop': ['eeeD'], 'loc': [cfg.synLocStart, cfg.synLocStart + cfg.synLocSpread], 'sec': 'basal_34', 'synMech': ['NMDA'], 'start': cfg.synTime, 'interval': 1000, 'noise': 0.0, 'number': 1, 'weight': cfg.glutAmp * cfg.glutAmpExSynScale, 'delay': cfg.exSynDelay}
 
 
 ###############################################################################
