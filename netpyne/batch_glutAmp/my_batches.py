@@ -35,9 +35,51 @@ if not os.path.exists(batchoutputdir):
 
 batches = {}
 
+# # Varying Potassium conductance scale and glutAmp
+# batch = {}
+# batch["label"] = "allKScale_glutAmp_2"
+# batch["cfgFile"] = "cfg.py"
+# batch["netParamsFile"] = "netParams.py"
+# params = OrderedDict()
+# params["allKScale"] = [0.25, 0.50, 1.0, 2.0]
+# params["glutAmp"] = list(np.linspace(0.0, 0.5, 10).round(2))
+# batch["params"] = params
+# batches[batch["label"]] = batch
+
+# # Varying Potassium conductance scale and glutAmp
+# batch = {}
+# batch["label"] = "allKScale_glutAmp"
+# batch["cfgFile"] = "cfg.py"
+# batch["netParamsFile"] = "netParams.py"
+# params = OrderedDict()
+# params["allKScale"] = [0.25, 0.50, 0.75, 1.0]
+# params["glutAmp"] = list(np.linspace(0.0, 0.5, 10).round(2))
+# batch["params"] = params
+# batches[batch["label"]] = batch
+
+# # Varying Potassium conductance scale
+# batch = {}
+# batch["label"] = "allKScale"
+# batch["cfgFile"] = "cfg.py"
+# batch["netParamsFile"] = "netParams.py"
+# params = OrderedDict()
+# params["allKScale"] = [0.50, 0.75, 1.0, 1.25, 1.5]
+# batch["params"] = params
+# batches[batch["label"]] = batch
+
 # Varying glutAmp
 batch = {}
-batch["label"] = "glutAmp"
+batch["label"] = "glutAmp04"
+batch["cfgFile"] = "cfg.py"
+batch["netParamsFile"] = "netParams.py"
+params = OrderedDict()
+params["glutAmp"] = list(np.linspace(0.0, 0.4, 10).round(2))
+batch["params"] = params
+batches[batch["label"]] = batch
+
+# Varying glutAmp
+batch = {}
+batch["label"] = "glutAmp05"
 batch["cfgFile"] = "cfg.py"
 batch["netParamsFile"] = "netParams.py"
 params = OrderedDict()
@@ -45,35 +87,45 @@ params["glutAmp"] = list(np.linspace(0.0, 0.5, 10).round(2))
 batch["params"] = params
 batches[batch["label"]] = batch
 
-# Varying synLocStart
+# Varying glutAmp
 batch = {}
-batch["label"] = "synLocStart"
+batch["label"] = "glutAmp06"
 batch["cfgFile"] = "cfg.py"
 batch["netParamsFile"] = "netParams.py"
 params = OrderedDict()
-params["synLocStart"] = [0.1, 0.2, 0.3, 0.4, 0.5]
+params["glutAmp"] = list(np.linspace(0.0, 0.6, 10).round(2))
 batch["params"] = params
 batches[batch["label"]] = batch
 
-# Varying synLocSpread
-batch = {}
-batch["label"] = "synLocSpread"
-batch["cfgFile"] = "cfg.py"
-batch["netParamsFile"] = "netParams.py"
-params = OrderedDict()
-params["synLocSpread"] = [0.1, 0.3, 0.4, 0.5, 0.7]
-batch["params"] = params
-batches[batch["label"]] = batch
+# # Varying synLocStart
+# batch = {}
+# batch["label"] = "synLocStart"
+# batch["cfgFile"] = "cfg.py"
+# batch["netParamsFile"] = "netParams.py"
+# params = OrderedDict()
+# params["synLocStart"] = [0.1, 0.2, 0.3, 0.4, 0.5]
+# batch["params"] = params
+# batches[batch["label"]] = batch
 
-# Varying numSyns
-batch = {}
-batch["label"] = "numSyns"
-batch["cfgFile"] = "cfg.py"
-batch["netParamsFile"] = "netParams.py"
-params = OrderedDict()
-params["numSyns"] = [5, 7, 9, 11, 13]
-batch["params"] = params
-batches[batch["label"]] = batch
+# # Varying synLocSpread
+# batch = {}
+# batch["label"] = "synLocSpread"
+# batch["cfgFile"] = "cfg.py"
+# batch["netParamsFile"] = "netParams.py"
+# params = OrderedDict()
+# params["synLocSpread"] = [0.1, 0.3, 0.4, 0.5, 0.7]
+# batch["params"] = params
+# batches[batch["label"]] = batch
+
+# # Varying numSyns
+# batch = {}
+# batch["label"] = "numSyns"
+# batch["cfgFile"] = "cfg.py"
+# batch["netParamsFile"] = "netParams.py"
+# params = OrderedDict()
+# params["numSyns"] = [5, 7, 9, 11, 13]
+# batch["params"] = params
+# batches[batch["label"]] = batch
 
 # # Varying glutAmp and numSyns
 # batch = {}
