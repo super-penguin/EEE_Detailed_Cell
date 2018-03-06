@@ -2041,8 +2041,6 @@ class CA229:
         h.pt3dadd(-76.76,108.47,-16.78,0.422, sec = self.apical[44])
 
 
-        # Set up the geom_nseg
-
 ############################################
 # Function for importing cell into NetPyNE
 ############################################

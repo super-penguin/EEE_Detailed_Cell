@@ -81,7 +81,7 @@ class CA229simp:
     Potential Backpropagation in Basal Dendrites of Prefrontal
     Cortical Pyramidal Neurons.
 
-    soma: soma compartment
+    soma_2: soma compartment
     apical: apical dendrites
     basal: basal dendrites
     axon: axon
@@ -145,7 +145,7 @@ class CA229simp:
     # Set up properties only in soma
     ###################
     def addsomachan(self):
-        for sec in self.soma:
+        for sec in self.soma_2:
             sec.cm = somaCm
             sec.g_pas = 1./somaRm
             # if h.ismembrane('na', sec = sec):
@@ -183,7 +183,7 @@ class CA229simp:
             h.thi2_na = -58
             sec.insert('kl')
             #h.distance(0,0.5,sec=self.soma[0])
-            h.distance(0,0.5,sec=self.soma)
+            h.distance(0,0.5,sec=self.soma_2)
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec=sec)
                 if (dist>= ILdist):
@@ -195,11 +195,11 @@ class CA229simp:
 # Distribution of sodium channels
 #########################################
     def gna_control(self):
-        for sec in self.soma:
+        for sec in self.soma_2:
             sec.gbar_na = somaNa
 
         for sec in self.basals:
-            h.distance(0, 0.5, sec = self.soma)
+            h.distance(0, 0.5, sec = self.soma_2)
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec = sec)
                 gNalin = basalNa - mNa * dist
@@ -215,7 +215,7 @@ class CA229simp:
 
         #for sec in self.axon:
         sec = self.axon
-        h.distance(0, 0.5, sec = self.soma)
+        h.distance(0, 0.5, sec = self.soma_2)
         for seg in sec.allseg():
             dist = h.distance(seg.x, sec = sec)
             if (dist >= 50 and dist <= 100):
@@ -230,11 +230,11 @@ class CA229simp:
 # Distribution of potassium channels
 #########################################
     def distKV(self):
-        for sec in self.soma:
+        for sec in self.soma_2:
             sec.gbar_kv = somaKv
 
         for sec in self.basals:
-            h.distance(0,0.5,sec=self.soma)
+            h.distance(0,0.5,sec=self.soma_2)
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec=sec)
                 gKVlin = somaKv + mKV * dist
@@ -257,11 +257,11 @@ class CA229simp:
 #########################################
     def distKA(self):
 
-        for sec in self.soma:
+        for sec in self.soma_2:
             gkabar_kap = somaKA/1e4
 
         for sec in self.basals:
-            h.distance(0,0.5,sec=self.soma)
+            h.distance(0,0.5,sec=self.soma_2)
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec=sec)
                 gkalin = somaKA + mgka*dist
@@ -281,7 +281,7 @@ class CA229simp:
                 sec(seg.x).gkabar_kad = gkalin * (1-ratio)/1e4
 
         for sec in self.apical:
-            h.distance(0,0.5,sec=self.soma)
+            h.distance(0,0.5,sec=self.soma_2)
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec=sec)
                 ratiolin = 1 - mgkaratio*dist
@@ -296,12 +296,12 @@ class CA229simp:
 # Distribution of Ca channels
 #########################################
     def distCa(self):
-        for sec in self.soma:
+        for sec in self.soma_2:
             sec.gbar_ca = somaCa
             sec.gbar_it = SomaCaT/1e4
 
         for sec in self.basals:
-            h.distance(0,0.5,sec = self.soma)
+            h.distance(0,0.5,sec = self.soma_2)
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec = sec)
                 if (dist > cadistB):
@@ -312,7 +312,7 @@ class CA229simp:
                     sec(seg.x).gbar_it = SomaCaT/1e4
 
         for sec in self.apical:
-            h.distance(0,0.5,sec = self.soma)
+            h.distance(0,0.5,sec = self.soma_2)
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec=sec)
                 if (dist > cadistA):
@@ -327,7 +327,7 @@ class CA229simp:
 #########################################
     def distspines(self):
         for sec in self.basals:
-            h.distance(0,0.5,sec = self.soma)
+            h.distance(0,0.5,sec = self.soma_2)
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec=sec)
                 if (dist >= spinedist):
@@ -338,7 +338,7 @@ class CA229simp:
                     sec(seg.x).g_pas = 1./somaRm
 
         for sec in self.apical:
-            h.distance(0,0.5,sec = self.soma)
+            h.distance(0,0.5,sec = self.soma_2)
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec=sec)
                 if (dist >= spinedist):
@@ -353,7 +353,7 @@ class CA229simp:
 #########################################
     def add_ih(self):
         #for sec in self.soma:
-        sec = self.soma
+        sec = self.soma_2
         sec.insert('Ih')
         sec.gIhbar_Ih = 0.0001
 
@@ -363,7 +363,7 @@ class CA229simp:
 
         for sec in self.apical:
             sec.insert('Ih')
-            h.distance(0,0.5,sec=self.soma)
+            h.distance(0,0.5,sec=self.soma_2)
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec=sec)
                 sec(seg.x).gIhbar_Ih = 0.0002*(-0.8696 + 2.0870*exp(dist/323))
@@ -392,7 +392,7 @@ class CA229simp:
             sec.gpeak_kBK = kBK_gpeak
             sec.caVhmin_kBK = -46.08 + kBK_caVhminShift
         #for sec in self.soma:
-        sec = self.soma
+        sec = self.soma_2
         sec.insert('kBK')
         sec.gpeak_kBK = kBK_gpeak
         sec.caVhmin_kBK = -46.08 + kBK_caVhminShift
@@ -410,7 +410,7 @@ class CA229simp:
 #########################################
     def no_ca(self):
         #for sec in self.soma:
-        sec = self.soma
+        sec = self.soma_2
         sec.gbar_ca = 0
         sec.gbar_it = 0
         for sec in self.apical:
@@ -441,7 +441,7 @@ class CA229simp:
         bdendnseg = 99
         axonnseg  = 3
 
-        self.add_comp('soma')
+        self.add_comp('soma_2')
         self.add_comp('axon')
         self.add_comp('Bdend1')
         self.add_comp('Bdend2')
@@ -450,11 +450,11 @@ class CA229simp:
         self.add_comp('Adend3')
         self.apical = [self.Adend1, self.Adend2, self.Adend3]
         self.basals = [self.Bdend1, self.Bdend2]
-        self.all_no_axon = [self.soma, self.Adend1, self.Adend2, self.Adend3, self.Bdend1, self.Bdend2]
+        self.all_no_axon = [self.soma_2, self.Adend1, self.Adend2, self.Adend3, self.Bdend1, self.Bdend2]
         self.alldend = [self.Adend1, self.Adend2, self.Adend3, self.Bdend1, self.Bdend2]
         
         self.axon.L = axonL; self.axon.diam = axonDiam;
-        self.soma.L = somaL; self.soma.diam = somaDiam
+        self.soma_2.L = somaL; self.soma_2.diam = somaDiam
         for sec in self.apical: 
             sec.L, sec.diam = apicL, apicDiam
         self.Bdend1.L = bdendL; self.Bdend1.diam = bdendDiam
@@ -464,10 +464,10 @@ class CA229simp:
         self.Bdend1.nseg = bdendnseg
         self.Bdend2.nseg = bdendnseg
 
-        self.axon.connect(self.soma,     0.0, 0.0)
-        self.Bdend1.connect(self.soma,   0.5, 0.0) # soma 0.5 to Bdend1 0
-        self.Bdend2.connect(self.soma,   0.5, 0.0) 
-        self.Adend1.connect(self.soma,   1.0, 0.0)
+        self.axon.connect(self.soma_2,     0.0, 0.0)
+        self.Bdend1.connect(self.soma_2,   0.5, 0.0) # soma 0.5 to Bdend1 0
+        self.Bdend2.connect(self.soma_2,   0.5, 0.0) 
+        self.Adend1.connect(self.soma_2,   1.0, 0.0)
         self.Adend2.connect(self.Adend1, 1.0, 0.0)
         self.Adend3.connect(self.Adend2, 1.0, 0.0)
 
