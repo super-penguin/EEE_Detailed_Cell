@@ -34,17 +34,22 @@ from math import sqrt, pi, log, exp
 #########################################
 # Cell passive properties
 global_Ra = 90
-spineFACTOR = 1.6 # It was 1.5 originally, in order to match the time constant,
+spineFACTOR = 1.5 # It was 1.5 originally, in order to match the time constant,
 # We try to increase it on Feb.27, 2018 according to Reetz et al. (2014)
 somaRm = 1500/0.04 # Try 1500/0.04 on Feb.27, 2018, Original 1000/0.04
-dendRm = somaRm # somaRm/spineFACTOR
-somaCm = 1.5431 # It was 1 originally, in order to increase the time constant,
+dendRm = somaRm/spineFACTOR # somaRm/spineFACTOR
+somaCm = 1.45 # It was 1 originally, in order to increase the time constant,
 # We increased it on Marth 1, 2018 according to Reetz et al. (2014)
+
+############ This is where the problem comes from when i want the hyperpolarization
+# after spike change
+# If dendCm = somaCm*spineFACTOR: No hyperpolarization after spike on plateau at all
+# If dendCm = somaCm/spineFACTOR: Huge hyperpolarization!!!
 dendCm = somaCm*spineFACTOR
 spinedist = 50 # distance at which spines start
-Vk = -95 #-95 # -100 #-105 # -80
+Vk = -100 # -100 #-105 # -80
 VNa = 65 #65 #60 #55
-pasVm = -65 #-80 #-85 #-89 #-90 #-65
+pasVm = -70 #-80 #-85 #-89 #-90 #-65
 
 # Specify cell biophysics
 # ratio = 0
@@ -76,7 +81,7 @@ somaCa = 2 #0.5 # total calcium channel conductance density of soma [pS/um^2]
 # This value is original 2, set to 1 and 0.5 for better match with TTX trace
 dendCa = 0.4 # dendritic total calcium conductance density
 
-SomaCaT = 1
+SomaCaT = 2
 # This value is original 8, set to 4,2,1 or 0 for better match with TTX trace
 dendCaT = 1.6  #0.5
 cadistB = 30  # dendritic calcium channel conductance equals that of soma up until this distance
@@ -86,9 +91,9 @@ gkl = 0.005
 ILdist = 15
 
 #############kBK.mod
-kBK_gpeak = 16.8e-4 #2.68e-4 #7.67842640257e-05 # Tried 2.68e-4 # original value of 268e-4 too high for this model
+kBK_gpeak = 2.68e-4 #7.67842640257e-05 #2.68e-4 #16.8e-4 #2.68e-4 #7.67842640257e-05 # Tried 2.68e-4 # original value of 268e-4 too high for this model
 # 7.67842640257e-05 or 6.68e-4 both works, can change it based on the interspike invervals we are aiming for
-kBK_caVhminShift = 40 #45 #50 #45.0 # shift upwards to get lower effect on subthreshold
+kBK_caVhminShift = 45 #45 #50 #45.0 # shift upwards to get lower effect on subthreshold
 
 
 #########################################
@@ -97,7 +102,7 @@ kBK_caVhminShift = 40 #45 #50 #45.0 # shift upwards to get lower effect on subth
 
 class CA229:
     """
-    A detailed model of Prefrontal layer V pyramidal neuron in Rat.
+    A detailed model of Prefrontal layer V pyramidal neuron in Mouse.
 
     Channel distributions and all other biophysical properties of model basal
     dendrites of prefrontal layer V pyramidal cell from Acker, Antic (2008)
