@@ -48,7 +48,7 @@ PARAMETER {
 :	vshift = -10	(mV)		: voltage shift (affects all)
 	vshift = 0	(mV)		: voltage shift (affects all)
 
-	tha  = -40 :-35.5 : -35	(mV)	: v 1/2 for act		(-42)
+	tha  = -38 :-40 :-35.5 : -35	(mV)	: v 1/2 for act		(-42)
 	qa   = 9	(mV)		: act slope
 	Ra   = 0.182	(/ms)		: open (v)
 	Rb   = 0.124	(/ms)		: close (v)

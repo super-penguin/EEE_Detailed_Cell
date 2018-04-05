@@ -89,7 +89,7 @@ PARAMETER {
 	Cdur	= 1	     (ms)		: transmitter duration (rising phase)
 	Alpha	= 4      (/ms /mM)	: forward (binding) rate (4)
 	Beta 	= 0.0015 (/ms)      : reverse (unbinding) rate
-	e	    = 0	     (mV)		: reversal potential
+	e	    = 0	     (mV)		: reversal potential - Try -10 mV on 04/03/2018, but no good results
     mg      = 1      (mM)       : external magnesium concentration
     fracca  = 0.13   : fraction of current that is ca ions; Spruston et al 95
 	gmax  = 1      (uS)
