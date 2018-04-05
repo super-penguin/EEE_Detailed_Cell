@@ -1,11 +1,11 @@
 ## Test glutamate evoked plateau potentials in a detailed model (CA229 cell)
 
-### Updated on Jan. 18, 2018
+### Updated on April. 05, 2018
     Both synaptic AMPARs/NMDARs and exsynaptic NMDARs are activated by one
     NetStim.
-    Synaptic AMPARs/NMDARs get activated 10~15 ms after the stimulation.
-    exsynaptic NMDARs get activated 12~20 ms after the stimulation.
-    gmax for AMPA is 0.05nS; gmax for NMDA is 0.05nS.
+    Synaptic AMPARs/NMDARs get activated 10~100 ms after the stimulation.
+    exsynaptic NMDARs get activated 15~115 ms after the stimulation.
+    gmax for AMPA is 0.05nS; gmax for NMDA is 0.005nS.
 
 
 ### Files:
@@ -28,17 +28,12 @@
 
     7. utils.py    - to save figures and simulation results in a folder with name of today's date
 
-    8. Experiment_new.py
-        - batch to explore the stimulation distance effect on multiple basal branches
-        - It will generate figures and json files to store the voltage traces
-        - Modify the parameters in "__main__" to choose the simulation
-
 
 ### Instruction:
 
     Compile mod files: python compile.py
 
-    Add parameters for testing in "main" of Experiment_no_spines.py or Experiment_new.py
+    Add parameters for testing in "main" of Experiment_no_spines.py
 
         (change number pool1 of synaptic AMPARs and NMDARs;
         change number pool 2 of exsyantpic NMDARs;
@@ -46,7 +41,7 @@
         change of stimulation location;
         change of syanptic weights;)
 
-    Run the file: python Experiment_no_spines.py or Experiment_new.py
+    Run the file: python Experiment_no_spines.py
 
 ### Output:
     All the figures and json data will be saved in a different folder with name of today's date.
