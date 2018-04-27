@@ -12,7 +12,7 @@ from utils import *
 ##############
 # Load data
 ##############
-path = "Data_04_26/"
+path = "Data_04_27/"
 # Analysis data with plateau amp and dur
 df_N = pd.read_csv(path + "total_results.csv")
 df_TTX = pd.read_csv(path + "TTX_total_results.csv")
@@ -25,13 +25,13 @@ df = pd.read_csv("Location_Amp_adj.csv")
 df_T = df_TTX[df_TTX['NMDA_weight'] == 0.7][['Bnum', 'Loc', 'NMDA_weight', 'platamp', 'platdur']]
 df_new = pd.merge(df, df_T, on=['Bnum', 'Loc'], how='left')
 # Distance and amp info for each basal branch
-df1 = df_new[(df_new['Bnum'] == "B14") & (df_new['distance']> 75 )][['distance', 'platamp', 'platdur']]
+df1 = df_new[(df_new['Bnum'] == "B14") & (df_new['distance']> 80 )][['distance', 'platamp', 'platdur']]
 # Note: the first measurements in basal14 has some problem at location 0.2-0.3
-df2 = df_new[(df_new['Bnum'] == "B15") & (df_new['distance']> 75 )][['distance', 'platamp', 'platdur']]
-df3 = df_new[(df_new['Bnum'] == "B22") & (df_new['distance']> 120 )][['distance', 'platamp', 'platdur']]
-df4 = df_new[(df_new['Bnum'] == "B25") & (df_new['distance']> 90 )][['distance', 'platamp', 'platdur']]
+df2 = df_new[(df_new['Bnum'] == "B15") & (df_new['distance']> 70 )][['distance', 'platamp', 'platdur']]
+df3 = df_new[(df_new['Bnum'] == "B22") & (df_new['distance']> 80 )][['distance', 'platamp', 'platdur']]
+df4 = df_new[(df_new['Bnum'] == "B25") & (df_new['distance']> 70 )][['distance', 'platamp', 'platdur']]
 df5 = df_new[(df_new['Bnum'] == "B34") & (df_new['distance']> 60 )][['distance', 'platamp', 'platdur']]
-df6 = df_new[(df_new['Bnum'] == "B31") & (df_new['distance']> 100 )][['distance', 'platamp', 'platdur']]
+df6 = df_new[(df_new['Bnum'] == "B31") & (df_new['distance']> 50 )][['distance', 'platamp', 'platdur']]
 
 ##############
 # Generating figs

@@ -129,7 +129,7 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
         #nc_AMPA[-1].threshold = -20
         ###########################
     for i in range(Pool1_num):
-        tempNMDA = h.nmda(Cell.basal[34](loc1[i]))
+        tempNMDA = h.nmda(Cell.basal[Bnum](loc1[i]))
         tempNMDA.gmax = 0.005*Syn_w1
         tempNMDA.onset= delay1[i] + ns.start
         SynNMDA.append(tempNMDA)
@@ -146,7 +146,7 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     for i in range(Pool2_num):
         ###########################
         # Adding extrasyanptic NMDA
-        tempNMDA2 = h.nmda(Cell.basal[34](loc2[i]))
+        tempNMDA2 = h.nmda(Cell.basal[Bnum](loc2[i]))
         tempNMDA2.gmax = 0.005*Syn_w2
         tempNMDA2.onset= delay2[i] + ns.start
         ExNMDA.append(tempNMDA2)
