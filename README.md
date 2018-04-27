@@ -56,7 +56,7 @@ This repo is for the detailed cell model CA229. It includes the simulation, anal
 
 6. Fig3_amp_loc    - load the distance information of each basal branch from file ("Location_Amp_adj.csv"), then merge the distance info with the analysis results for each type of NMDA mod file and plot the plateau amplitude vs. distance to soma.
 
-7. Experiment_no_spines_Joe.py    - load the cell into NetPyNE and run simulation like Fig2_experiment  (**Author: Joe Graham**)
+7. netpyne    - load the cell into NetPyNE and run simulation like Fig2_experiment  (**Author: Joe Graham**)
 
 8. Voltage_clamp_protocol.py    - to test the voltage clamp protocols and I-V curves of each NMDA mod file.
 
