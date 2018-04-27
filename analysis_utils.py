@@ -36,8 +36,8 @@ def meas_platdur(data, thresh = 10, dt = 0.025):
     """
     # Make sure dt = 0.025 and there is no stimulation for the first 50 ms
     # If there is anything before 50ms, change the time points for baseline
-    baseline = np.mean(data[500:2000])
-    stable = data[2000:]
+    baseline = np.mean(data[4000:6000])
+    stable = data[6000:]
     above = [val for val in stable if val > (baseline + thresh)]
     platdur = dt * len(above)
     return platdur
@@ -86,7 +86,7 @@ def IST_spikes (data, dt = 0.025):
     ISTs:
         The average time of interspike intervals
     """
-    spikes = get_EPSPs(data, 70, dt)
+    spikes = get_EPSPs(data, 60, dt)
     IST = []
     count = len(spikes)
     spike_mvalue = []
@@ -135,7 +135,7 @@ def half_width_2EPSP(data, thresh = 2, stim_time = 80, dt = 0.025):
         The half_width of the 2nd EPSP
 
     """
-    baseline = np.mean(data[100:2000])
+    baseline = np.mean(data[4000:6000])
     # Make sure dt = 0.025 and there is no stimulation for the first 50 ms
     data_idx = int(stim_time/dt)
     new_data = data[data_idx:]
@@ -165,12 +165,12 @@ def get_EPSPs(data, thresh = 2, dt = 0.025):
         A list of turple.
         Each turple has the index of max EPSP, and value of max EPSP.
     """
-    baseline = np.mean(data[100:2000])
-    stable = data[2000:]
+    baseline = np.mean(data[4000:6000])
+    stable = data[6000:]
     EPSPs = []
     for idx, val in enumerate(stable[:-1]):
         if (val >= (baseline + thresh)) and (val > stable[idx-1]) and (val >= stable[idx+1]):
-            time = (idx + 2000) * dt
+            time = (idx + 6000) * dt
             EPSPs.append((time, val))
     return EPSPs
 
@@ -235,7 +235,7 @@ def half_width_one_EPSP(data, thresh = 2, dt = 0.025):
     half width = (idx_two - idx_one) * timestep
 
     """
-    baseline = np.mean(data[100:2000])
+    baseline = np.mean(data[4000:6000])
     # Make sure dt = 0.025 and there is no stimulation for the first 50 ms
     max_val = max(data)
     max_idx = data.index(max(data))
@@ -269,8 +269,8 @@ def get_closest (data, target):
 def meas_platamp(data, dt = 0.025):
     """Measures plateau amplitude (average of voltage - baseline while volt
         trace is above baseline + thresh)"""
-    baseline = np.mean(data[100:2000])
-    stable = data[2000:]
+    baseline = np.mean(data[4000:6000])
+    stable = data[6000:]
     # above = [val for val in stable if val > (baseline + thresh)]
     spike_num = spike_count(stable)
     if spike_num == 0:
@@ -303,10 +303,11 @@ def meas_platamp(data, dt = 0.025):
 
 #test = [-2,-1, 0, 3, 5, 7, 8,7, 5, 4,4, 1,1,0,-1]
 def TTX_platamp(data):
-    baseline = np.mean(data[500:2000])
-    stable = data[2000:]
-    above = [idx for idx, val in enumerate(stable) if val > (baseline+10)]
-    if len(above) <= 10:
+    baseline = np.mean(data[4000:6000])
+    stable = data[6000:]
+    above = [idx for idx, val in enumerate(stable) if val > (baseline+15)]
+    # platamp = max(stable) - baseline
+    if len(above) <= 15:
         platamp = max(stable) - baseline
     else:
         idx1 = above[0]

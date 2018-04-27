@@ -4,8 +4,9 @@ The orginal model is from
 https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=117207&file=/acker_antic/Model/CA%20229.hoc#tabs-2
 Modified by : Peng (Penny) Gao <penggao.1987@gmail.com>
 
+Run simulation with NMDAmajor.mod file - for comparison of NMDA.mod, NMDAeee.mod and NMDAmajor.mod
 """
-from CA229_v2 import *
+from CA229 import *
 import matplotlib.pyplot as plt
 from neuron import h
 import numpy as np
@@ -13,18 +14,23 @@ from utils import *
 import json
 import itertools
 import time
-import pdb     # For python debugging
+# import pdb     # For python debugging
 from random import *
 
 h.load_file('stdrun.hoc') # for initialization
 
+def random_floats(low, high, size):
+    return [np.random.uniform(low, high) for _ in xrange(size)]
 
+def random_2(low, high, size):
+    time_random = np.linspace(low, high, size)
+    np.random.seed(10)
+    np.random.shuffle(time_random)
+    return time_random
 
 ################### Test the ratio of different repceptors
 
-
-def Glu_Stim(TTX = False, Pool1_num = 9, Pool2_num = 9, Beta = 0.067,
-Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
+def Glu_Stim(TTX = False, Pool1_num = 9, Pool2_num = 9, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     """
     Model the Glumate Stimulation.
     Model the Receptors in 2 pools:
@@ -48,50 +54,32 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
         Figures: recording from soma and 3 different locations from basal dendrites
         json: soma and dendritc voltage recording and parameters info
     """
-    ###########################################
     Cell = CA229()
-    timestr = time.strftime("%Y%m%d-%H%M")
+    ###########################################
+    timestr = time.strftime("%H%M")
     data = time.strftime("%m_%d")
     directory = 'Data_' + data +'/'
 
     if (TTX == True):
         Cell.TTX()
-        title = "TTX_Pool1_"+ str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
-            str(Beta) + "_NMDA_Cdur_"+str(Cdur)+ "_Pool1_W_" + str(Syn_w1) + \
-            "_Pool2_W_" + str(Syn_w2) + "_"+ timestr + "_joe"
+        title = "Major_TTX_Pool1_"+ str(Pool1_num) + "_Pool1_W_" + str(Syn_w1) + \
+            "_Pool2_" + str(Pool2_num) + "_Pool2_W_" + str(Syn_w2) + "_" + timestr
+
     else:
-        title = "Pool1_"+ str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
-            str(Beta) + "_NMDA_Cdur_"+str(Cdur)+ "_Pool1_W_" + str(Syn_w1) + \
-            "_Pool2_W_" + str(Syn_w2) + "_"+ timestr + "_joe"
+        title = "Major_Pool1_"+ str(Pool1_num) + "_Pool1_W_" + str(Syn_w1) + \
+            "_Pool2_" + str(Pool2_num) + "_Pool2_W_" + str(Syn_w2) + "_" + timestr
 
-    ##########
+    ###########################################
+    # Syanptic weights
+    # --- Need to confirm
+    ###########################################
 
-    glutAmp           = Syn_w1
-    glutAmpExSynScale = Syn_w2 / Syn_w1
-    glutAmpDecay      = 0.0 #5.0 # percent/um
-    synLocMiddle      = (loc[0] + loc[1])/2
-    synLocRadius      = synLocMiddle - loc[0]
-    initDelay         = 10.0
-    synDelay          = 0.5 # ms/um
-    exSynDelay        = 1.0 # ms/um
+    #ampaweight = Syn_w #0.00058
+    #Pyramidal to pyramidal AMPA conductance (Wang,Gao,2000).
 
-    branch_length     = 166.25942491682142 # CA229.basal[34].L
-    numSyns           = Pool1_num
-    numExSyns         = Pool2_num
-    glutAmp           = Syn_w1
-
-    syn_locs = np.linspace(synLocMiddle-synLocRadius, synLocMiddle+synLocRadius, numSyns)
-    syn_dists = branch_length * np.abs(syn_locs - synLocMiddle)
-    syn_weights = glutAmp * (1 - syn_dists * glutAmpDecay/100)
-    syn_weights = [weight if weight > 0.0 else 0.0 for weight in syn_weights]
-    syn_delays = initDelay + (synDelay * syn_dists)
-
-    exsyn_locs = np.linspace(synLocMiddle-synLocRadius, synLocMiddle+synLocRadius, numExSyns)
-    exsyn_dists = branch_length * np.abs(exsyn_locs - synLocMiddle)
-    exsyn_weights = glutAmpExSynScale * glutAmp * (1 - exsyn_dists * glutAmpDecay/100)
-    exsyn_weights = [weight if weight > 0.0 else 0.0 for weight in exsyn_weights]
-    exsyn_delays = initDelay + (exSynDelay * exsyn_dists)
-
+    #nmdaweight = Syn_w
+    #Pyramidal to pyramidal NMDA conductance, for 1.1 iNMDA-to-iAMPA ratio (Wang,Gao,2000).
+    #For ratio 0.9 use: 0.16/For ratio 1.3 use:0.25
 
     ###########################################
     # Adding Pool 1
@@ -100,45 +88,45 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     SynAMPA = []
     nc_AMPA = []
     SynNMDA = []
-    nc_NMDA = []
+    # nc_NMDA = []
 
+    ###########################################
     loc1 = list(np.linspace(Loc[0], Loc[1], Pool1_num))
-    #delay1 = random_2(10, 50 + int(Syn_w1*50), Pool1_num)
-    delay1 = syn_delays
+    ###########################################
+    # Loc and time delay set up
+    delay1 = random_2(10, 50 + int(Syn_w1*50), Pool1_num)
     ns = h.NetStim()
     ns.interval = 20
     ns.number = 1
     ns.start = 190
     ns.noise = 0
-
-    print
-    print("delay1")
-    print(delay1)
-    print
-    print("mean: %f" % (np.mean(delay1)))
-    print("std : %f" % (np.std(delay1)))
-
+    ###########################################
     for i in range(Pool1_num):
         ###########################
         # Adding AMPA
         SynAMPA.append(h.AMPA(Cell.basal[34](loc1[i])))
-        SynAMPA[-1].gmax = 0.04
-        #SynAMPA1[-1].Beta = 0.28
+        SynAMPA[-1].gmax = 0.05
         nc_AMPA.append(h.NetCon(ns, SynAMPA[i]))
         nc_AMPA[-1].delay = delay1[i] # delay1[i] #uniform(1,20)
-        nc_AMPA[-1].weight[0] = syn_weights[i] # Syn_w1
-        #nc_AMPA[-1].threshold = -20
+        nc_AMPA[-1].weight[0] = Syn_w1
         ###########################
         #Adding NMDA
+
+    for i in range(Pool1_num):
+        tempNMDA = h.nmda(Cell.basal[34](loc1[i]))
+        tempNMDA.gmax = 0.005*Syn_w1
+        tempNMDA.onset= delay1[i] + ns.start
+        SynNMDA.append(tempNMDA)
+
         # SynNMDA.append(h.NMDA(Cell.basal[34](loc1[i])))
-        # Using NMDAeee.mod file
-        SynNMDA.append(h.NMDAeee(Cell.basal[34](loc1[i])))
-        SynNMDA[-1].gmax = 0.01
-        SynNMDA[-1].Beta = Beta
-        SynNMDA[-1].Cdur = Cdur
-        nc_NMDA.append(h.NetCon(ns, SynNMDA[i]))
-        nc_NMDA[-1].delay = delay1[i] #uniform(1,20)
-        nc_NMDA[-1].weight[0] = syn_weights[i] # Syn_w1
+        # # Using NMDAeee.mod file
+        # # SynNMDA.append(h.NMDAeee(Cell.basal[34](loc1[i])))
+        # SynNMDA[-1].gmax = 0.005
+        # SynNMDA[-1].Beta = Beta
+        # SynNMDA[-1].Cdur = Cdur
+        # nc_NMDA.append(h.NetCon(ns, SynNMDA[i]))
+        # nc_NMDA[-1].delay = delay1[i] #uniform(1,20)
+        # nc_NMDA[-1].weight[0] = Syn_w1
 
     ###########################################
     # Adding Pool 2
@@ -147,28 +135,15 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     nc_ExNMDA = []
 
     loc2 = list(np.linspace(Loc[0], Loc[1], Pool2_num))
-    #delay2 = random_2(15, 55 + int(Syn_w2*60), Pool2_num)
-    delay2 = exsyn_delays
-
-    print
-    print("delay2")
-    print(delay2)
-    print
-    print("mean: %f" % (np.mean(delay2)))
-    print("std : %f" % (np.std(delay2)))
-
+#    delay2 = list(np.linspace(5, 10, Pool2_num))
+    delay2 = random_2(15, 55 + int(Syn_w2*60), Pool2_num)
     for i in range(Pool2_num):
         ###########################
         # Adding extrasyanptic NMDA
-        # ExNMDA.append(h.NMDA(Cell.basal[34](loc2[i])))
-        # Using NMDAeee.mod file
-        ExNMDA.append(h.NMDAeee(Cell.basal[34](loc2[i])))
-        ExNMDA[-1].gmax = 0.01
-        ExNMDA[-1].Beta = Beta
-        ExNMDA[-1].Cdur = Cdur
-        nc_ExNMDA.append(h.NetCon(ns, ExNMDA[i]))
-        nc_ExNMDA[-1].delay = delay2[i] #uniform(1,20)
-        nc_ExNMDA[-1].weight[0] = exsyn_weights[i] # Syn_w2 #(i/5.0)*Syn_w2
+        tempNMDA2 = h.nmda(Cell.basal[34](loc2[i]))
+        tempNMDA2.gmax = 0.005*Syn_w2
+        tempNMDA2.onset= delay2[i] + ns.start
+        ExNMDA.append(tempNMDA2)
 
     ###########################################
     ### Recording
@@ -195,11 +170,13 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     ### Be careful, vmax does not have value before run
     ###########################################
     h.celsius = 32 # 32
-    h.v_init =  -79.1863191308 #-81.0866900034 #-78.1162028163 #-67.3
+    h.v_init =  -73.6927850677
     h.init()
     h.tstop = 1000
     h.run()
 
+#    pdb.set_trace()   #Debugging
+    # print v_vec_soma[-1]
     plt.clf()
     plt.close()
     plt.figure(figsize = (16, 6), dpi = 100)
@@ -240,14 +217,14 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     data['SynAMPA']['weight'] = Syn_w1
     data['SynNMDA']['num'] = Pool1_num
     data['SynNMDA']['locs'] = loc1
-    data['SynNMDA']['weight'] = Syn_w1
-    data['SynNMDA']['Beta'] = Beta
-    data['SynNMDA']['Cdur'] = Cdur
+    # data['SynNMDA']['weight'] = Syn_w1
+    # data['SynNMDA']['Beta'] = Beta
+    # data['SynNMDA']['Cdur'] = Cdur
     data['ExNMDA']['num'] = Pool2_num
     data['ExNMDA']['locs'] = loc2
     data['ExNMDA']['weight'] = Syn_w2
-    data['ExNMDA']['Beta'] = Beta
-    data['ExNMDA']['Cdur'] = Cdur
+    # data['ExNMDA']['Beta'] = Beta
+    # data['ExNMDA']['Cdur'] = Cdur
 
     data['recording']['time'] = list(t_vec)
     data['recording']['soma']['voltage'] = list(v_vec_soma)
@@ -257,25 +234,24 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     data['recording']['soma']['ica'] = list(cai_soma)
     data['recording']['basal_34']['ica_0.3'] = list(cai_dend)
 
-    savejson(data, title, directory, ext = "json", verbose = False)
 
+    savejson(data, title, directory, ext = "json", verbose = False)
 
 ######################################################
 if __name__ == "__main__":
     print("Running the model")
     start_time = time.time()
 
-    loc = [0.3, 0.6]
-    weight = [0.11, 0.12, 0.13, 0.15]
-    # weight = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
-
+    loc = [0.25, 0.6]
+    # weight = [0.95]
+    # weight = [0.35]
+    # Plot weight for Fig2
+    # weight = [0, 0.1, 0.15, 0.2, 0.22, 0.23, 0.3, 0.4, 0.5, 0.55, 0.6]
+    # Analysis weight for Fig2
+    weight = [0.1, 0.2, 0.3, 0.35, 0.36, 0.37, 0.38, 0.39, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     for w in weight:
-
         Pool_num = 8 + int(20*w)
-
-        #Glu_Stim(TTX, Pool1_num, Pool2_num, Beta, Cdur, Syn_w1, Syn_w2, Loc)
-        Glu_Stim(False, Pool_num, Pool_num, 0.02, 50 + int(100*w), w, w, loc)
-        Glu_Stim(True, Pool_num, Pool_num, 0.02, 50 + int(100*w), w, w, loc)
-
+        Glu_Stim(False, Pool_num, Pool_num, w, w, loc)
+        # Glu_Stim(True, Pool_num, Pool_num, w, w, loc)
     print("Finished.")
     print("--- %s seconds ---" % (time.time() - start_time))

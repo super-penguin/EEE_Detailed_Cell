@@ -51,11 +51,11 @@ dendCm = somaCm*spineFACTOR
 spinedist = 40 # distance at which spines start
 Vk = -87
 VNa = 75
-pasVm = -63
+pasVm = -65
 # Specify cell biophysics
 somaNa = 150 # [pS/um2]
-axonNa = 5000   # [pS/um2]
-basalNa = 150  # [pS/um2]
+axonNa = 10000   # [pS/um2]
+basalNa = 200  # [pS/um2]
 mNa = 0.5  # decrease in sodium channel conductance in basal dendrites [pS/um2/um]
 apicalNa = 375
 gNamax = 2000  # maximum basal sodium conductance
