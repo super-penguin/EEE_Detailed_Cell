@@ -28,47 +28,48 @@ from utils import *
 ##############
 # Load dist info
 ##############
-with open('dist.json', 'r') as fp:
+with open('curr_inj_dist.json', 'r') as fp:
     df_dist = json.load(fp)
 
-path = 'Dist_GluStim_figs/NMDA_DMS/'
+path = 'Data_08_13/'
 basal_num = [15, 34, 14, 22, 25, 31]
 
 #### I perfer to combine all the data mannally without loop
-df1 = pd.read_csv(path + 'B' + str(15) + "/TTX_total_results.csv")
-df1_T = df1[df1['NMDA_weight'] == 0.7][['Bnum', 'Loc', 'NMDA_weight', 'platamp', 'platdur']].sort_values(by = ['Loc'])
-df1_T['dist'] = df_dist['15']
+df1 = pd.read_csv(path + 'B' + str(15) + "/total_results.csv")
+df1 = df1.sort_values(by = ['Loc'])
+df1['dist'] = df_dist['15']
 
-df2 = pd.read_csv(path + 'B' + str(34) + "/TTX_total_results.csv")
-df2_T = df2[df2['NMDA_weight'] == 0.7][['Bnum', 'Loc', 'NMDA_weight', 'platamp', 'platdur']].sort_values(by = ['Loc'])
-df2_T['dist'] = df_dist['34']
+df2 = pd.read_csv(path + 'B' + str(34) + "/total_results.csv")
+df2 = df2.sort_values(by = ['Loc'])
+df2['dist'] = df_dist['34']
 
-df3 = pd.read_csv(path + 'B' + str(14) + "/TTX_total_results.csv")
-df3_T = df3[df3['NMDA_weight'] == 0.7][['Bnum', 'Loc', 'NMDA_weight', 'platamp', 'platdur']].sort_values(by = ['Loc'])
-df3_T['dist'] = df_dist['14']
+df3 = pd.read_csv(path + 'B' + str(14) + "/total_results.csv")
+df3 = df3.sort_values(by = ['Loc'])
+df3['dist'] = df_dist['14']
 
-df4 = pd.read_csv(path + 'B' + str(22) + "/TTX_total_results.csv")
-df4_T = df4[df4['NMDA_weight'] == 0.7][['Bnum', 'Loc', 'NMDA_weight', 'platamp', 'platdur']].sort_values(by = ['Loc'])
-df4_T['dist'] = df_dist['22']
+df4 = pd.read_csv(path + 'B' + str(22) + "/total_results.csv")
+df4 = df4.sort_values(by = ['Loc'])
+df4['dist'] = df_dist['22']
 
-df5 = pd.read_csv(path + 'B' + str(25) + "/TTX_total_results.csv")
-df5_T = df5[df5['NMDA_weight'] == 0.7][['Bnum', 'Loc', 'NMDA_weight', 'platamp', 'platdur']].sort_values(by = ['Loc'])
-df5_T['dist'] = df_dist['25']
+df5 = pd.read_csv(path + 'B' + str(25) + "/total_results.csv")
+df5 = df5.sort_values(by = ['Loc'])
+df5['dist'] = df_dist['25']
 
-df6 = pd.read_csv(path + 'B' + str(31) + "/TTX_total_results.csv")
-df6_T = df6[df6['NMDA_weight'] == 0.7][['Bnum', 'Loc', 'NMDA_weight', 'platamp', 'platdur']].sort_values(by = ['Loc'])
-df6_T['dist'] = df_dist['31']
+df6 = pd.read_csv(path + 'B' + str(31) + "/total_results.csv")
+df6 = df6.sort_values(by = ['Loc'])
+df6['dist'] = df_dist['31']
 
 ##############
 # Preprocess data
 ##############
-df1 = df1_T[(df1_T['Bnum'] == "B15") & (df1_T['dist']> 50 )][['dist', 'platamp', 'platdur']]
-df2 = df2_T[(df2_T['Bnum'] == "B34") & (df2_T['dist']> 50 )][['dist', 'platamp', 'platdur']]
-df3 = df3_T[(df3_T['Bnum'] == "B14") & (df3_T['dist']> 50 )][['dist', 'platamp', 'platdur']]
-df4 = df4_T[(df4_T['Bnum'] == "B22") & (df4_T['dist']> 50 )][['dist', 'platamp', 'platdur']]
-df5 = df5_T[(df5_T['Bnum'] == "B25") & (df5_T['dist']> 50 )][['dist', 'platamp', 'platdur']]
-df6 = df6_T[(df6_T['Bnum'] == "B31") & (df6_T['dist']> 50 )][['dist', 'platamp', 'platdur']]
+df1 = df1[(df1['Bnum'] == "B15") & (df1['dist']> 50 )]
+df2 = df2[(df2['Bnum'] == "B34") & (df2['dist']> 50 )]
+df3 = df3[(df3['Bnum'] == "B14") & (df3['dist']> 50 )]
+df4 = df4[(df4['Bnum'] == "B22") & (df4['dist']> 50 )]
+df5 = df5[(df5['Bnum'] == "B25") & (df5['dist']> 50 )]
+df6 = df6[(df6['Bnum'] == "B31") & (df6['dist']> 50 )]
 
+# print df1
 ##############
 # Generating figs
 ##############
@@ -129,7 +130,7 @@ df6 = df6_T[(df6_T['Bnum'] == "B31") & (df6_T['dist']> 50 )][['dist', 'platamp',
 plt.close()
 plt.clf()
 figure = plt.figure(figsize = (9,6), dpi = 300)
-left = 0.1
+left = 0.15
 bottom = 0.15
 width = 0.8
 height = 0.75
@@ -147,31 +148,31 @@ ax.yaxis.set_ticks_position('left')
 ax.xaxis.set_ticks_position('bottom')
 ax.axhline(linewidth=3, color = 'black')
 ax.axvline(linewidth=3, color = 'black')
-ax.plot(df1['dist'], df1['platamp'], linestyle = '-', marker = 'o', markersize=10,
+ax.plot(df1['dist'], df1['peak_v'], linestyle = '-', marker = 'o', markersize=10,
 color = tableau(14), linewidth = 1.5, markerfacecolor="None", markeredgecolor = tableau(20), markeredgewidth=1.5, label = "Basal #15")
-ax.plot(df2['dist'], df2['platamp'], linestyle = '--', marker = 'v', markersize=10,
+ax.plot(df2['dist'], df2['peak_v'], linestyle = '--', marker = 'v', markersize=10,
 color = tableau(14), linewidth = 1.5, markerfacecolor="None", markeredgecolor = tableau(20), markeredgewidth=1.5, label = "Basal #34")
-ax.plot(df3['dist'], df3['platamp'], linestyle = '-', marker = '^', markersize=10,
+ax.plot(df3['dist'], df3['peak_v'], linestyle = '-', marker = '^', markersize=10,
 color = tableau(14), linewidth = 1.5, markerfacecolor="None", markeredgecolor = tableau(20), markeredgewidth=1.5, label = "Basal #14")
-ax.plot(df4['dist'], df4['platamp'], linestyle = '--', marker = '*', markersize=10,
+ax.plot(df4['dist'], df4['peak_v'], linestyle = '--', marker = '*', markersize=10,
 color = tableau(14), linewidth = 1.5, markerfacecolor="None", markeredgecolor = tableau(20), markeredgewidth=1.5, label = "Basal #22")
-ax.plot(df5['dist'], df5['platamp'], linestyle = '-', marker = 's', markersize=10,
+ax.plot(df5['dist'], df5['peak_v'], linestyle = '-', marker = 's', markersize=10,
 color = tableau(14), linewidth = 1.5, markerfacecolor="None", markeredgecolor = tableau(20), markeredgewidth=1.5, label = "Basal #25")
-ax.plot(df6['dist'], df6['platamp'], linestyle = '--', marker = '8', markersize=10,
+ax.plot(df6['dist'], df6['peak_v'], linestyle = '--', marker = '8', markersize=10,
 color = tableau(14), linewidth = 1.5, markerfacecolor="None", markeredgecolor = tableau(20), markeredgewidth=1.5, label = "Basal #31")
 ax.set_xlim([0, 250])
 ax.set_xlabel("Input distance from soma (um)", size = 22, color = 'black')
-ax.set_ylabel("Amplitude in soma (mV)", size = 22, color = 'black')
+ax.set_ylabel("Voltage (mV)", size = 22, color = 'black')
 plt.tick_params(labelsize=22, pad = 12, direction='in', length=6, width=2, colors = 'black')
-plt.yticks(np.arange(0, 31, step=5))
+plt.yticks(np.arange(0, 120, step=20))
 plt.xticks(np.arange(0, 251, step=50))
 plt.legend(loc = 'best', fontsize = 20)
-ax.set_title("Plateau Amplitude vs. Input Location", size = 22, color = 'black')
+ax.set_title("Dendritic voltage with current injection", size = 22, color = 'black')
 ttl = ax.title
 ttl.set_position([0.5, 1.05])
-ax.set_ylim([0, 30])
+ax.set_ylim([0, 90])
 #plt.show()
-name = "Dist_Platamp_BW_v2"
+name = "Dist_Curr_inj_BW_v2"
 save(name, path, ext = 'ps', close = False, verbose = True)
 save(name, path, ext = 'pdf', close = False, verbose = True)
 save(name, path, ext = 'png', close = True, verbose = True)

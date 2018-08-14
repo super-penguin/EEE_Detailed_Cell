@@ -21,7 +21,11 @@ global_Ra = 100
 spinedist = 40 :decreased from 50
 Vk = -87 :increased from -100 shift the RMP towards higher potential
 Vna = 75 :increased from 65
-pasVm = -63: increased from -75
+pasVm = -65
+
+Update again on July 25, 2018. Srdjan would like to keep the original value for Vna
+Vna = 60 : same value as the 2009 model
+SomaNa = 600 : increased from 150 to get a similar bAP responses as the 2009 model
 
 Ref: https://neuroelectro.org/neuron/111/
      https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=168148&file=/stadler2014_layerV/LayerVinit.hoc#tabs-2
@@ -50,12 +54,12 @@ somaCm = 1.45 # It was 1 originally, in order to increase the time constant,
 dendCm = somaCm*spineFACTOR
 spinedist = 40 # distance at which spines start
 Vk = -87
-VNa = 75
+VNa = 60 # 75
 pasVm = -65
 # Specify cell biophysics
-somaNa = 150 # [pS/um2]
-axonNa = 10000   # [pS/um2]
-basalNa = 200  # [pS/um2]
+somaNa = 900 #150 # [pS/um2]
+axonNa = 5000   # [pS/um2]
+basalNa = 150 # It was 200 before July 24th: decreased to match the bAP [pS/um2]
 mNa = 0.5  # decrease in sodium channel conductance in basal dendrites [pS/um2/um]
 apicalNa = 375
 gNamax = 2000  # maximum basal sodium conductance
@@ -68,6 +72,7 @@ somaKA = 150 #100  # It was 150 in the best fit model from Srdjan 2009
 # In order to decrease the hyperpolirization after APs on plateau
 # decreased to 100 on Feb 27, 2018
 # Changed back to 150 on March 01, 2018
+
 # initial basal total GKA conductance [pS/um2] equals somatic
 mgka = 0.7  # linear rise in IA channel density
 mgkaratio = 1./300 # linear drop in KAP portion, 1 at soma
@@ -85,7 +90,7 @@ cadistA = 30
 gkl = 0.005
 ILdist = 15
 #############BK.mod
-kBK_gpeak = 2.68e-4 #7.67842640257e-05 # original value of 268e-4 too high for this model
+kBK_gpeak = 2.68e-4 #7.68e-4 #7.67842640257e-05 # original value of 268e-4 too high for this model
 kBK_caVhminShift = 45 #shift upwards to get lower effect on subthreshold
 
 #########################################
@@ -110,13 +115,14 @@ class CA229:
     """
 
     #############
-    def __init__(self, Na_ratio = 1.0, HVA_ratio = 1.0, LVA_ratio = 1.0, KA_ratio = 1.0, BK_ratio = 1.0):
+    def __init__(self, Na_ratio = 1.0, HVA_ratio = 1.0, LVA_ratio = 1.0, KA_ratio = 1.0, BK_ratio = 1.0, SK_ratio = 1.0):
         # Define the ratio of parameters to adjust systematically
         self.Na_ratio = Na_ratio
         self.HVA_ratio = HVA_ratio
         self.LVA_ratio = LVA_ratio
         self.KA_ratio = KA_ratio
         self.BK_ratio = BK_ratio
+        self.SK_ratio = SK_ratio
         self.create_cell()
         self.optimize_nseg()
         self.add_axon()
@@ -132,6 +138,7 @@ class CA229:
         self.distspines()
         self.add_ih()
         self.add_CaK()
+        # self.add_SK()
 
     ###################
     # Set up nseg number
@@ -328,7 +335,7 @@ class CA229:
             h.distance(0, 0.5, sec = self.soma[0])
             for seg in sec.allseg():
                 dist = h.distance(seg.x, sec = sec)
-                if (dist >= 50 and dist <= 100):
+                if (dist >= 35 and dist <= 50):
                     sec(seg.x).gbar_na = axonNa
                 else:
                     sec(seg.x).gbar_na = somaNa
@@ -495,11 +502,32 @@ class CA229:
             sec.caVhmin_kBK = -46.08 + kBK_caVhminShift
 
 #########################################
+# Add SK-type calcium activated potassium current
+#########################################
+    def add_SK(self, ratio = 1.0):
+        # for sec in self.axon:
+        #     sec.insert('SK_E2')
+        #     sec.gSK_E2bar_SK_E2 = 0.00000047 * self.SK_ratio
+        # for sec in self.soma:
+        #     sec.insert('SK_E2')
+        #     sec.gSK_E2bar_SK_E2 = 0.00000065 * self.SK_ratio
+        for sec in self.apical:
+            sec.insert('SK_E2')
+            sec.gSK_E2bar_SK_E2 = 0.000002 * self.SK_ratio
+        for sec in self.basals:
+            sec.insert('SK_E2')
+            sec.gSK_E2bar_SK_E2 = 0.0000001 * self.SK_ratio
+#########################################
 # TTX
 #########################################
     def TTX(self):
         for sec in self.all:
             sec.gbar_na = 0
+
+    def TTX_bAP(self):
+        for sec in self.basals:
+            sec.gbar_na = 0
+
 #########################################
 # No calcium
 #########################################

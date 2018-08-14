@@ -6,6 +6,9 @@ Modified by : Peng (Penny) Gao <penggao.1987@gmail.com>
 
 Run simulation with NMDAmajor.mod file - for comparison of NMDA.mod, NMDAeee.mod and NMDAmajor.mod
 """
+
+import sys
+sys.path.append("..")
 from CA229 import *
 import matplotlib.pyplot as plt
 from neuron import h
@@ -100,7 +103,7 @@ def Glu_Stim(TTX = False, Pool1_num = 9, Pool2_num = 9, Syn_w1 = 0.01, Syn_w2 = 
     ns.number = 1
     ns.start = 190
     ns.noise = 0
-    ###########################################
+    ##########################################
     for i in range(Pool1_num):
         ###########################
         # Adding AMPA
@@ -217,7 +220,7 @@ def Glu_Stim(TTX = False, Pool1_num = 9, Pool2_num = 9, Syn_w1 = 0.01, Syn_w2 = 
     data['SynAMPA']['weight'] = Syn_w1
     data['SynNMDA']['num'] = Pool1_num
     data['SynNMDA']['locs'] = loc1
-    # data['SynNMDA']['weight'] = Syn_w1
+    data['SynNMDA']['weight'] = Syn_w1
     # data['SynNMDA']['Beta'] = Beta
     # data['SynNMDA']['Cdur'] = Cdur
     data['ExNMDA']['num'] = Pool2_num
@@ -244,9 +247,10 @@ if __name__ == "__main__":
 
     loc = [0.25, 0.6]
     # weight = [0.95]
-    # weight = [0.35]
+    # weight = [0.65, 0.75]
     # Plot weight for Fig2
-    # weight = [0, 0.1, 0.15, 0.2, 0.22, 0.23, 0.3, 0.4, 0.5, 0.55, 0.6]
+    # weight = [0.1, 0.2, 0.3, 0.39, 0.4, 0.5, 0.6, 0.7, 0.8]
+    # weight = [0.1, 0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.65, 0.75]
     # Analysis weight for Fig2
     weight = [0.1, 0.2, 0.3, 0.35, 0.36, 0.37, 0.38, 0.39, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     for w in weight:

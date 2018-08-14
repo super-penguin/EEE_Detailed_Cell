@@ -27,7 +27,7 @@ new_data = pd.DataFrame(columns = ['AMPA_num', 'AMPA_locs', 'AMPA_weight',
 # Need to check the name of data folder
 # Replace this step with a function
 # Add the correct path here:
-path_to_json = 'Data_04_25/'
+path_to_json = 'Data_07_27/N/'
 start_time = time.time()
 json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
 
@@ -58,7 +58,7 @@ print("--- %s seconds ---" % (time.time() - start_time))
 new_data = new_data.sort_values(by = ['NMDA_weight'])
 # print new_data
 # Add the correct saving path here:
-savepath = path_to_json + '/NMDA_total_results.csv'
+savepath = path_to_json + '/total_results.csv'
 new_data.to_csv(savepath)
 
 # ##### Plotting
@@ -101,7 +101,7 @@ plt.ylim([-1, 25])
 # ax.grid(False)
 ax.set_axis_bgcolor('white')
 title1 = "Platamp"
-save(title1, path_to_json, ext="ps", close=False, verbose=True)
+save(title1, path_to_json, ext="pdf", close=False, verbose=True)
 save(title1, path_to_json, ext="png", close=True, verbose=True)
 
 
@@ -132,7 +132,7 @@ plt.ylim([-1, 22])
 # ax.grid(False)
 ax.set_axis_bgcolor('white')
 title2 = "Platamp_v2"
-save(title2, path_to_json, ext="ps", close=False, verbose=True)
+save(title2, path_to_json, ext="pdf", close=False, verbose=True)
 save(title2, path_to_json, ext="png", close=True, verbose=True)
 ############### Experimental results
 # plt.close()

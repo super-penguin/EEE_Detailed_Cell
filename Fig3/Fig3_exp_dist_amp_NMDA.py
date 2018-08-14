@@ -15,6 +15,8 @@ import itertools
 import time
 import pdb     # For python debugging
 from random import *
+import math
+import pandas as pd
 
 h.load_file('stdrun.hoc') # for initialization
 
@@ -27,12 +29,32 @@ def random_2(low, high, size):
     np.random.shuffle(time_random)
     return time_random
 
+
+# def stim_loc(Branch):
+#     nseg = Branch.nseg
+#     loc_vec = []
+#     dist_vec = []
+#     for seg in Branch.allseg():
+#         loc_vec.append(seg.x)
+#         dist_vec.append(h.distance(seg.x, sec = Branch))
+#     length = dist_vec[-1] - dist_vec[0]
+#     each_len = math.floor((1.0/nseg) * 100)/100.0
+#     loc = []
+#     if each_len > 10:
+#         for i in range(1, len(loc_vec)):
+#             temp_loc = [loc_vec[i] - each_len, loc_vec[i] + each_len]
+#             loc.append(temp_loc)
+#     elif each_len <= 10:
+#         for i in range(1, len(loc_vec)-2, 2):
+#             temp_loc =[loc_vec[i], loc_vec[i+2]]
+#             loc.append(temp_loc)
+#     return loc
+
 ################### Test the ratio of different repceptors
 
 
-def Glu_Stim(Bnum = 34, TTX = False,
-Pool1_num = 9, Pool2_num = 9, Beta = 0.067, Cdur = 1,
-Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
+def Glu_Stim(Bnum = 34, TTX = False, Pool1_num = 9, Pool2_num = 9,
+Beta = 0.067, Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
 
     """
     Model the Glumate Stimulation.
@@ -62,15 +84,17 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     timestr = time.strftime("%Y%m%d-%H%M")
     data = time.strftime("%m_%d")
 
+    L1 = "{:.2f}".format(Loc[0])
+    L2 = "{:.2f}".format(Loc[1])
     if (TTX == True):
         Cell.TTX()
-        directory = 'Data_' + data +'/' + "B" + str(Bnum) + "/Loc" + str(Loc[0]) + "_" + str(Loc[1]) + "/TTX/"
+        directory = 'Data_' + data +'/' + "B" + str(Bnum) + "/Loc" + L1 + "_" + L2 + "/TTX/"
         title =  "TTX_Pool1_"+ \
         str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
         str(Beta) + "_NMDA_Cdur_" + str(Cdur) + "_Pool1_W_" + str(Syn_w1) + \
         "_Pool2_W_" + str(Syn_w2) + "_"+ timestr
     else:
-        directory = 'Data_' + data +'/' + "B" + str(Bnum) + "/Loc" + str(Loc[0]) + "_" + str(Loc[1]) + "/N/"
+        directory = 'Data_' + data +'/' + "B" + str(Bnum) + "/Loc" + L1 + "_" + L2 + "/N/"
         title = "Pool1_"+ \
         str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
         str(Beta) + "_NMDA_Cdur_" + str(Cdur) + "_Pool1_W_" + str(Syn_w1) + \
@@ -204,15 +228,15 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     data['TTX'] = TTX
     # data['TTX'] = N
     data['SynAMPA']['num'] = Pool1_num
-    data['SynAMPA']['locs'] = loc1
+    data['SynAMPA']['locs'] = Loc
     data['SynAMPA']['weight'] = Syn_w1
     data['SynNMDA']['num'] = Pool1_num
-    data['SynNMDA']['locs'] = loc1
+    data['SynNMDA']['locs'] = Loc
     data['SynNMDA']['weight'] = Syn_w1
     data['SynNMDA']['Beta'] = Beta
     data['SynNMDA']['Cdur'] = Cdur
     data['ExNMDA']['num'] = Pool2_num
-    data['ExNMDA']['locs'] = loc2
+    data['ExNMDA']['locs'] = Loc
     data['ExNMDA']['weight'] = Syn_w2
     data['ExNMDA']['Beta'] = Beta
     data['ExNMDA']['Cdur'] = Cdur
@@ -237,9 +261,11 @@ if __name__ == "__main__":
     #weight = [0.08]
     # basal_num = [15]
     basal_num = [15, 34, 14, 22, 25, 31]
-    # loc = [[0.5, 0.6]]
-    loc = [[0.1, 0.2], [0.2, 0.3], [0.3, 0.4], [0.4, 0.5], [0.5, 0.6], [0.6, 0.7], [0.7, 0.8], [0.8, 0.9]]
+    with open('data.json', 'r') as fp:
+        data = json.load(fp)
+
     for b in basal_num:
+        loc = data[str(b)]
         for l in loc:
             for w in weight:
                 # Pool_num = 8

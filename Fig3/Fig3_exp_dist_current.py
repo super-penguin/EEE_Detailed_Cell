@@ -3,8 +3,7 @@ Test the effects of different syanptic inputs in the detailed PFC L5 neuron
 The orginal model is from
 https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=117207&file=/acker_antic/Model/CA%20229.hoc#tabs-2
 Modified by : Peng (Penny) Gao <penggao.1987@gmail.com>
-For Major's model, same setting need a little bit bigger input strength to
-measure the plateau amplitude and duration.
+
 """
 from CA229 import *
 import matplotlib.pyplot as plt
@@ -31,8 +30,8 @@ def random_2(low, high, size):
 ################### Test the ratio of different repceptors
 
 
-def Glu_Stim(Bnum = 34, TTX = False, Pool1_num = 9, Pool2_num = 9,
-Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
+def Glu_Stim(Bnum = 34, TTX = False,
+amp = 0.1, dur = 3, Loc = 0.5):
 
     """
     Model the Glumate Stimulation.
@@ -62,21 +61,13 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     timestr = time.strftime("%Y%m%d-%H%M")
     data = time.strftime("%m_%d")
 
-    L1 = "{:.2f}".format(Loc[0])
-    L2 = "{:.2f}".format(Loc[1])
     if (TTX == True):
         Cell.TTX()
-        directory = 'Data_' + data +'/' + "B" + str(Bnum) + "/Loc" + L1 + "_" + L2 + "/TTX/"
-        title =  "TTX_Pool1_"+ \
-        str(Pool1_num) + "_Pool2_" + str(Pool2_num) + \
-        "_Pool1_W_" + str(Syn_w1) + \
-        "_Pool2_W_" + str(Syn_w2) + "_"+ timestr
+        directory = 'Data_' + data +'/'
+        title = "B_TTX_" + str(Bnum) + "_Loc_" + str(Loc) + "_amp_" + str(amp) + "_dur_" + str(dur) + "_"+ timestr
     else:
-        directory = 'Data_' + data +'/' + "B" + str(Bnum) + "/Loc" + L1 + "_" + L2 + "/N/"
-        title = "Pool1_"+ \
-        str(Pool1_num) + "_Pool2_" + str(Pool2_num) + \
-        "_Pool1_W_" + str(Syn_w1) + \
-        "_Pool2_W_" + str(Syn_w2) + "_"+ timestr
+        directory = 'Data_' + data +'/'
+        title = "B_" + str(Bnum) + "_Loc_" + str(Loc) + "_amp_" + str(amp) + "_dur_" + str(dur) + "_"+ timestr
 
     ###########################################
     # Syanptic weights
@@ -94,14 +85,9 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     # Adding Pool 1
     ###########################################
     ##### AMPA
-    SynAMPA = []
-    nc_AMPA = []
-    SynNMDA = []
-    nc_NMDA = []
-
     #spine ID
     # spineid = [ (60+5*i) for i in range(Pool1_num)]
-    loc1 = list(np.linspace(Loc[0], Loc[1], Pool1_num))
+    # loc1 = list(np.linspace(Loc[0], Loc[1], 10))
     ###########################################
     ###########################################
     ###########################################
@@ -110,48 +96,13 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     #delay1 = [10, 13, 13]*3
 #    delay1 = random_floats(10, 20, 3) + random_floats(13, 23, 6)
 #    delay1=random_floats(10, 10 + int(100*Syn_w1), Pool1_num)
-    delay1 = random_2(10, 20 + int(Syn_w1*50), Pool1_num)
-    # delay1 = random_2(10, 30, Pool1_num)
+    #delay1 = random_2(10, 30, Pool1_num)
     # delay11 = [x+2 for x in delay1]
-    ns = h.NetStim()
-    ns.interval = 20
-    ns.number = 1
-    ns.start = 190
-    ns.noise = 0
+    Iclamp = h.IClamp(Cell.basal[Bnum](Loc))
+    Iclamp.dur = dur
+    Iclamp.amp = amp
+    Iclamp.delay = 200
 
-    for i in range(Pool1_num):
-        ###########################
-        # Adding AMPA
-        SynAMPA.append(h.AMPA(Cell.basal[Bnum](loc1[i])))
-        SynAMPA[-1].gmax = 0.05
-        #SynAMPA1[-1].Beta = 0.28
-        nc_AMPA.append(h.NetCon(ns, SynAMPA[i]))
-        nc_AMPA[-1].delay = delay1[i] # delay1[i] #uniform(1,20)
-        nc_AMPA[-1].weight[0] = Syn_w1
-        #nc_AMPA[-1].threshold = -20
-        ###########################
-    for i in range(Pool1_num):
-        tempNMDA = h.nmda(Cell.basal[Bnum](loc1[i]))
-        tempNMDA.gmax = 0.005*Syn_w1
-        tempNMDA.onset= delay1[i] + ns.start
-        SynNMDA.append(tempNMDA)
-    ###########################################
-    # Adding Pool 2
-    ###########################################
-    ExNMDA = []
-    nc_ExNMDA = []
-
-    loc2 = list(np.linspace(Loc[0], Loc[1], Pool2_num))
-#    delay2 = list(np.linspace(20, 20 + int(150*Syn_w2), Pool2_num))
-    delay2 = random_2(15, 25 + int(Syn_w2*60), Pool2_num)
-    # delay2 = random_2(10, 150 + int(100*Syn_w2), Pool2_num)
-    for i in range(Pool2_num):
-        ###########################
-        # Adding extrasyanptic NMDA
-        tempNMDA2 = h.nmda(Cell.basal[Bnum](loc2[i]))
-        tempNMDA2.gmax = 0.005*Syn_w2
-        tempNMDA2.onset= delay2[i] + ns.start
-        ExNMDA.append(tempNMDA2)
 
     ###########################################
     ### Recording
@@ -197,18 +148,11 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
 
     data = Vividict()
     data['TTX'] = TTX
-    # data['TTX'] = N
-    data['SynAMPA']['num'] = Pool1_num
-    data['SynAMPA']['locs'] = Loc
-    data['SynAMPA']['weight'] = Syn_w1
-    data['SynNMDA']['num'] = Pool1_num
-    data['SynNMDA']['locs'] = Loc
-    data['SynNMDA']['weight'] = Syn_w1
+    data['Loc'] = Loc
+
     # data['SynNMDA']['Beta'] = Beta
     # data['SynNMDA']['Cdur'] = Cdur
-    data['ExNMDA']['num'] = Pool2_num
-    data['ExNMDA']['locs'] = Loc
-    data['ExNMDA']['weight'] = Syn_w2
+
     # data['ExNMDA']['Beta'] = Beta
     # data['ExNMDA']['Cdur'] = Cdur
 
@@ -224,27 +168,16 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
 if __name__ == "__main__":
     print("Running the model")
     start_time = time.time()
-    Pool_num = 12
-    # weight = [0.1, 0.3, 0.5, 0.7]   # For the demo traces
-    weight = [0.9]
-    # weight = [0.8, 0.9] # For the amp vs. input distance figure
-    # weight = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
-    # weight = [0.05, 0.055, 0.06, 0.065, 0.07, 0.075, 0.08, 0.085, 0.09, 0.095, 0.1,
-    # 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
-    #weight = [0.08]
-    # basal_num = [15]
-    basal_num = [15, 34, 14, 22, 25, 31]
-    # loc = [[0.5, 0.6]]
-    with open('data.json', 'r') as fp:
-        data = json.load(fp)
 
+
+    # basal_num = [15, 34, 14, 22, 25, 31]
+    basal_num = [34]
+    # loc = [[0.5, 0.6]]
+    loc = [0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95]
     for b in basal_num:
-        loc = data[str(b)]
         for l in loc:
-            for w in weight:
-                # Pool_num = 8
-                Glu_Stim(b, False, Pool_num, Pool_num, w, w, l)
-                Glu_Stim(b, True, Pool_num, Pool_num, w, w, l)
+            Glu_Stim(b, False, 0.2, 200, l)
+                # Glu_Stim(b, True, Pool_num, Pool_num, 0.02, 10, w, w, l)
 
 
     print("Finished.")

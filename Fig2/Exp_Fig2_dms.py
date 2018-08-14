@@ -4,8 +4,9 @@ The orginal model is from
 https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=117207&file=/acker_antic/Model/CA%20229.hoc#tabs-2
 Modified by : Peng (Penny) Gao <penggao.1987@gmail.com>
 
-Run simulation with NMDA.mod file - for comparison of NMDA.mod, NMDAeee.mod and NMDAmajor.mod
 """
+import sys
+sys.path.append("..")
 from CA229 import *
 import matplotlib.pyplot as plt
 from neuron import h
@@ -176,7 +177,7 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     h.run()
 
 #    pdb.set_trace()   #Debugging
-    # print v_vec_soma[-1]
+    print v_vec_soma[-1]
     plt.clf()
     plt.close()
     plt.figure(figsize = (16, 6), dpi = 100)
@@ -243,15 +244,16 @@ if __name__ == "__main__":
     start_time = time.time()
 
     loc = [0.25, 0.6]
-    # weight = [0.95]
+    # weight = [0, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.90]
     # Plot weight for Fig2
-    # weight = [0, 0.1, 0.15, 0.2, 0.22, 0.23, 0.3, 0.4, 0.5, 0.55, 0.6]
+    # weight = [0.24, 0.25]
+    # weight = [0.1, 0.15, 0.20, 0.22, 0.24, 0.3, 0.4, 0.5, 0.6, 0.7]
     # Analysis weight for Fig2
-    weight = [0.1, 0.15, 0.2, 0.21, 0.22, 0.23, 0.24, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    weight = [0.1, 0.2, 0.21, 0.22, 0.23, 0.24, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
     for w in weight:
         Pool_num = 8 + int(20*w)
         Glu_Stim(False, Pool_num, Pool_num, 0.02, 50 + int(100*w), w, w, loc)
-        # Glu_Stim(True, Pool_num, Pool_num, 0.02, 50 + int(100*w), w, w, loc)
+        Glu_Stim(True, Pool_num, Pool_num, 0.02, 50 + int(100*w), w, w, loc)
     print("Finished.")
     print("--- %s seconds ---" % (time.time() - start_time))

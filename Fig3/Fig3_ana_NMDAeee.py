@@ -16,34 +16,16 @@ from analysis_utils import tableau
 from utils import *
 import seaborn as sns
 
-# def list_files(dir):
-#     r = []
-#     for root, dirs, files in os.walk(dir):
-#         # r = [name for name in files if name.endswith('.json')]
-#         for name in files:
-#             r.append(os.path.join(root, name))
-#     return r
-#
-# def listdir_nohidden(path):
-#     for f in os.listdir(path):
-#         if not f.startswith('.'):
-#             yield f
 
-# Need to organize all the analysis and plotting here
 ######################################################
-new_data = pd.DataFrame(columns = ['TTX', 'Bnum', 'Loc', 'AMPA_num', 'AMPA_locs', 'AMPA_weight',
-'NMDA_num', 'NMDA_locs', 'NMDA_weight', 'NMDA_Beta', 'NMDA_Cdur',
-'spike_num','platamp', 'ISI', 'platdur'])
-start_time = time.time()
-path = "Fig3_NMDAeee/"
-level1 = [item for item in os.listdir(path) if not item.startswith('.')]
-for l1 in level1:
-    level2 = [item for item in os.listdir(path + str(l1)) if not item.endswith('.csv')]
-
-i = 0
-for l1 in level1:
+def analysis_N(Bnum = 'B34', path = "Data_05_24/"):
+    level2 = level[Bnum]
+    new_data = pd.DataFrame(columns = ['TTX', 'Bnum', 'Loc', 'AMPA_num', 'AMPA_locs', 'AMPA_weight',
+    'NMDA_num', 'NMDA_locs', 'NMDA_weight', 'NMDA_Beta', 'NMDA_Cdur',
+    'spike_num','platamp', 'ISI', 'platdur'])
+    i = 0 # initialization
     for l2 in level2:
-        path_to_json = path + str(l1) + "/"+ str(l2) + "/N"
+        path_to_json = path + str(Bnum) + "/"+ str(l2) + "/N"
         json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
         num = len(json_files)
         for index, js in enumerate(json_files):
@@ -51,7 +33,6 @@ for l1 in level1:
                 data = json.load(json_file)
                 filename = json_files[index]
                 TTX = False
-                Bnum = str(l1)
                 Loc = str(l2)
                 AMPA_num = data['SynAMPA']['num']
                 AMPA_locs = data['SynAMPA']['locs']
@@ -64,32 +45,23 @@ for l1 in level1:
                 spike_num = spike_count(data['recording']['soma']['voltage'])
                 ISI, platamp = meas_platamp(data['recording']['soma']['voltage'])
                 platdur = meas_platdur(data['recording']['soma']['voltage'])
-                # # For TTX
-                # platamp = TTX_platamp(data['recording']['soma']['voltage'])
-                # ISI = 0
-                new_data.loc[index + i*num] = [TTX, Bnum, Loc, AMPA_num, AMPA_locs, AMPA_weight,
-                    NMDA_num, NMDA_locs, NMDA_weight, NMDA_Beta, NMDA_Cdur,
-                    spike_num, platamp, ISI, platdur]
-            i = i+1
 
-savepath = path + '/total_results.csv'
-new_data.to_csv(savepath)
+                new_data.loc[index + i*num] = [TTX, Bnum, Loc, AMPA_num, AMPA_locs, AMPA_weight,
+                    NMDA_num, NMDA_locs, NMDA_weight, NMDA_Beta, NMDA_Cdur, spike_num, platamp, ISI, platdur]
+        i = i + 1
+    savepath = path + str(Bnum) +'/total_results.csv'
+    new_data.to_csv(savepath)
 
 
 ######################################################
-new_data = pd.DataFrame(columns = ['TTX', 'Bnum', 'Loc', 'AMPA_num', 'AMPA_locs', 'AMPA_weight',
-'NMDA_num', 'NMDA_locs', 'NMDA_weight', 'NMDA_Beta', 'NMDA_Cdur',
-'spike_num','platamp', 'ISI', 'platdur'])
-start_time = time.time()
-# path = "Data_04_24/"
-level1 = [item for item in os.listdir(path) if not (item.startswith('.') or item.endswith('.csv'))]
-for l1 in level1:
-    level2 = [item for item in os.listdir(path + str(l1)) if not item.startswith('.')]
-
-i = 0
-for l1 in level1:
+def analysis_TTX(Bnum = 'B34', path = "Data_05_23/"):
+    level2 = level[Bnum]
+    new_data = pd.DataFrame(columns = ['TTX', 'Bnum', 'Loc', 'AMPA_num', 'AMPA_locs', 'AMPA_weight',
+    'NMDA_num', 'NMDA_locs', 'NMDA_weight', 'NMDA_Beta', 'NMDA_Cdur',
+    'spike_num','platamp', 'ISI', 'platdur'])
+    i = 0 # initialization
     for l2 in level2:
-        path_to_json = path + str(l1) + "/"+ str(l2) + "/TTX"
+        path_to_json = path + str(Bnum) + "/"+ str(l2) + "/TTX"
         json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
         num = len(json_files)
         for index, js in enumerate(json_files):
@@ -97,7 +69,6 @@ for l1 in level1:
                 data = json.load(json_file)
                 filename = json_files[index]
                 TTX = True
-                Bnum = str(l1)
                 Loc = str(l2)
                 AMPA_num = data['SynAMPA']['num']
                 AMPA_locs = data['SynAMPA']['locs']
@@ -108,15 +79,28 @@ for l1 in level1:
                 NMDA_Beta = data['SynNMDA']['Beta']
                 NMDA_Cdur = data['SynNMDA']['Cdur']
                 spike_num = 0
-                # ISI, platamp = meas_platamp(data['recording']['soma']['voltage'])
                 platdur = meas_platdur(data['recording']['soma']['voltage'])
-                # For TTX
                 platamp = TTX_platamp(data['recording']['soma']['voltage'])
                 ISI = 0
                 new_data.loc[index + i*num] = [TTX, Bnum, Loc, AMPA_num, AMPA_locs, AMPA_weight,
-                    NMDA_num, NMDA_locs, NMDA_weight, NMDA_Beta, NMDA_Cdur,
-                    spike_num, platamp, ISI, platdur]
-            i = i+1
+                    NMDA_num, NMDA_locs, NMDA_weight, NMDA_Beta, NMDA_Cdur, spike_num, platamp, ISI, platdur]
+        i = i + 1
+    savepath = path + str(Bnum) +'/TTX_total_results.csv'
+    new_data.to_csv(savepath)
 
-savepath = path + '/TTX_total_results.csv'
-new_data.to_csv(savepath)
+
+######################################################
+if __name__ == "__main__":
+    start_time = time.time()
+    path = "Data_05_24/"
+    level1 = [item for item in os.listdir(path) if not item.startswith('.')]
+
+    # The loc sites vary from different basal branch
+    # Use a dictionary to store each of seperately
+    level = {}
+    for l1 in level1:
+        level[l1] = [item for item in os.listdir(path + str(l1)) if not (item.endswith('.csv') or item.endswith('.DS_Store'))]
+
+    for l1 in level1:
+        analysis_N(l1, path)
+        analysis_TTX(l1, path)
