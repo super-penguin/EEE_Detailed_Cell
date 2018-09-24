@@ -1,3 +1,8 @@
+"""
+authors:
+Salvador Dura <salvadordura@gmail.com>
+Joe Graham <joe.w.graham@gmail.com>
+"""
 import os
 import sys
 from inspect import getsourcefile

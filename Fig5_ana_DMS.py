@@ -1,28 +1,27 @@
 """
 The analysis functions for EEE stimulation data.
+Fig 5. B1 - Model1
 
-Author: Peng (Penny) Gao
+Author: Peng Penny Gao
 penggao.1987@gmail.com
 """
 
 import json
 import matplotlib.pyplot as plt
-from pprint import pprint
 import os
 import numpy as np
 import pandas as pd
 from analysis_utils import *
-from analysis_utils import tableau
 from utils import *
 import seaborn as sns
 
 
 ######################################################
-def analysis_N(Bnum = 'B34', path = "Data_05_23/"):
+def analysis_N(Bnum = 'B34', path = "Fig5/DMS/"):
     level2 = level[Bnum]
     new_data = pd.DataFrame(columns = ['TTX', 'Bnum', 'Loc', 'AMPA_num', 'AMPA_locs', 'AMPA_weight',
-    'NMDA_num', 'NMDA_locs', 'NMDA_weight', 'NMDA_Beta', 'NMDA_Cdur',
-    'spike_num','platamp', 'ISI', 'platdur'])
+    'NMDA_num', 'NMDA_locs', 'NMDA_weight',
+    'spike_num','soma_platamp', 'soma_platdur', 'dend_platamp', 'dend_platdur'])
     i = 0 # initialization
     for l2 in level2:
         path_to_json = path + str(Bnum) + "/"+ str(l2) + "/N"
@@ -32,7 +31,7 @@ def analysis_N(Bnum = 'B34', path = "Data_05_23/"):
             with open(os.path.join(path_to_json, js)) as json_file:
                 data = json.load(json_file)
                 filename = json_files[index]
-                TTX = False
+                TTX = data['TTX']
                 Loc = str(l2)
                 AMPA_num = data['SynAMPA']['num']
                 AMPA_locs = data['SynAMPA']['locs']
@@ -40,25 +39,24 @@ def analysis_N(Bnum = 'B34', path = "Data_05_23/"):
                 NMDA_num = data['SynNMDA']['num']
                 NMDA_locs = data['SynNMDA']['locs']
                 NMDA_weight = data['SynNMDA']['weight']
-                NMDA_Beta = data['SynNMDA']['Beta']
-                NMDA_Cdur = data['SynNMDA']['Cdur']
                 spike_num = spike_count(data['recording']['soma']['voltage'])
-                ISI, platamp = meas_platamp(data['recording']['soma']['voltage'])
-                platdur = meas_platdur(data['recording']['soma']['voltage'])
+                idx, soma_platamp = soma_plat(data['recording']['soma']['voltage'])
+                dend_platamp, dend_platdur = dend_plat(data['recording']['basal']['voltage_input'], idx)
+                soma_platdur = dend_platdur
 
                 new_data.loc[index + i*num] = [TTX, Bnum, Loc, AMPA_num, AMPA_locs, AMPA_weight,
-                    NMDA_num, NMDA_locs, NMDA_weight, NMDA_Beta, NMDA_Cdur, spike_num, platamp, ISI, platdur]
+                    NMDA_num, NMDA_locs, NMDA_weight, spike_num, soma_platamp, soma_platdur, dend_platamp, dend_platdur]
         i = i + 1
     savepath = path + str(Bnum) +'/total_results.csv'
     new_data.to_csv(savepath)
 
 
 ######################################################
-def analysis_TTX(Bnum = 'B34', path = "Data_05_23/"):
+def analysis_TTX(Bnum = 'B34', path = "Fig5/DMS/"):
     level2 = level[Bnum]
     new_data = pd.DataFrame(columns = ['TTX', 'Bnum', 'Loc', 'AMPA_num', 'AMPA_locs', 'AMPA_weight',
-    'NMDA_num', 'NMDA_locs', 'NMDA_weight', 'NMDA_Beta', 'NMDA_Cdur',
-    'spike_num','platamp', 'ISI', 'platdur'])
+    'NMDA_num', 'NMDA_locs', 'NMDA_weight',
+    'spike_num', 'soma_platamp','soma_platdur', 'dend_platamp', 'dend_platdur'])
     i = 0 # initialization
     for l2 in level2:
         path_to_json = path + str(Bnum) + "/"+ str(l2) + "/TTX"
@@ -68,7 +66,7 @@ def analysis_TTX(Bnum = 'B34', path = "Data_05_23/"):
             with open(os.path.join(path_to_json, js)) as json_file:
                 data = json.load(json_file)
                 filename = json_files[index]
-                TTX = True
+                TTX = data['TTX']
                 Loc = str(l2)
                 AMPA_num = data['SynAMPA']['num']
                 AMPA_locs = data['SynAMPA']['locs']
@@ -76,23 +74,20 @@ def analysis_TTX(Bnum = 'B34', path = "Data_05_23/"):
                 NMDA_num = data['SynNMDA']['num']
                 NMDA_locs = data['SynNMDA']['locs']
                 NMDA_weight = data['SynNMDA']['weight']
-                NMDA_Beta = data['SynNMDA']['Beta']
-                NMDA_Cdur = data['SynNMDA']['Cdur']
                 spike_num = 0
-                platdur = meas_platdur(data['recording']['soma']['voltage'])
-                platamp = TTX_platamp(data['recording']['soma']['voltage'])
-                ISI = 0
-                new_data.loc[index + i*num] = [TTX, Bnum, Loc, AMPA_num, AMPA_locs, AMPA_weight,
-                    NMDA_num, NMDA_locs, NMDA_weight, NMDA_Beta, NMDA_Cdur, spike_num, platamp, ISI, platdur]
+                idx, soma_platamp = soma_platamp_TTX(data['recording']['soma']['voltage'])
+                soma_platdur = soma_platdur_TTX(data['recording']['soma']['voltage'])
+                dend_platamp, dend_platdur =  TTX_dend_plat(data['recording']['basal']['voltage_input'], idx)
+
+                new_data.loc[index + i*num] = [TTX, Bnum, Loc, AMPA_num, AMPA_locs, AMPA_weight, NMDA_num, NMDA_locs, NMDA_weight,  spike_num, soma_platamp, soma_platdur, dend_platamp, dend_platdur]
         i = i + 1
     savepath = path + str(Bnum) +'/TTX_total_results.csv'
     new_data.to_csv(savepath)
 
-
 ######################################################
 if __name__ == "__main__":
     start_time = time.time()
-    path = "Data_08_02/"
+    path = "Fig5/DMS/"
     level1 = [item for item in os.listdir(path) if not item.startswith('.')]
 
     # The loc sites vary from different basal branch
@@ -104,3 +99,6 @@ if __name__ == "__main__":
     for l1 in level1:
         analysis_N(l1, path)
         analysis_TTX(l1, path)
+
+    print("Finished.")
+    print("--- %s seconds ---" % (time.time() - start_time))

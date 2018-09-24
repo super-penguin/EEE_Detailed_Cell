@@ -1,10 +1,11 @@
 """
 The analysis functions for EEE stimulation data.
+Plot all the traces with glutamate stimulations
+For Major NMDA mod file: model 2
 
 Author: Peng (Penny) Gao
 penggao.1987@gmail.com
 """
-
 import json
 import matplotlib.pyplot as plt
 from pprint import pprint
@@ -19,7 +20,7 @@ import seaborn as sns
 
 ###### Load DATA
 ## Add the correct analysis path here:
-path_to_json = 'Data_05_08/'
+path_to_json = 'Fig3/Major/Plot/'
 json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
 nfile = len(json_files)
 
@@ -32,10 +33,10 @@ for index, js in enumerate(json_files):
         time = data['recording']['time'][4000:]
         new_time = [x-100.0 for x in time]
         soma_trace = data['recording']['soma']['voltage'][4000:]
-        dend1_trace = data['recording']['basal']['voltage_0.8'][4000:]
-        dend2_trace = data['recording']['basal']['voltage_0.5'][4000:]
-        dend3_trace = data['recording']['basal']['voltage_0.3'][4000:]
-        labels = data['Loc']
+        dend1_trace = data['recording']['basal_34']['voltage_0.8'][4000:]
+        dend2_trace = data['recording']['basal_34']['voltage_0.5'][4000:]
+        dend3_trace = data['recording']['basal_34']['voltage_0.3'][4000:]
+        labels = data['ExNMDA']['weight']
         df.loc[index] = [soma_trace, dend1_trace, dend2_trace, dend3_trace, labels]
 
 df = df.sort_values(by = ['labels'])
@@ -55,7 +56,7 @@ plt.xticks(fontsize = 20)
 plt.yticks(fontsize = 20)
 plt.gca().grid(False)
 plt.gca().set_axis_bgcolor('white')
-save("Simulated_Trace", path_to_json, ext="ps", close=False, verbose=True)
+# save("Simulated_Trace", path_to_json, ext="ps", close=False, verbose=True)
 save("Simulated_Trace", path_to_json, ext="png", close=True, verbose=True)
 ###############################################################
 ##### Overlay trace plot - dend0.3
@@ -72,7 +73,7 @@ plt.xticks(fontsize = 20)
 plt.yticks(fontsize = 20)
 plt.gca().grid(False)
 plt.gca().set_axis_bgcolor('white')
-save("Dend_0.3", path_to_json, ext="ps", close=False, verbose=True)
+# save("Dend_0.3", path_to_json, ext="ps", close=False, verbose=True)
 save("Dend_0.3", path_to_json, ext="png", close=True, verbose=True)
 ###############################################################
 ##### Overlay trace plot - dend0.5
@@ -89,7 +90,7 @@ plt.xticks(fontsize = 20)
 plt.yticks(fontsize = 20)
 plt.gca().grid(False)
 plt.gca().set_axis_bgcolor('white')
-save("Dend_0.5", path_to_json, ext="ps", close=False, verbose=True)
+# save("Dend_0.5", path_to_json, ext="ps", close=False, verbose=True)
 save("Dend_0.5", path_to_json, ext="png", close=True, verbose=True)
 ###############################################################
 ##### Overlay trace plot - dend0.8
@@ -106,7 +107,7 @@ plt.xticks(fontsize = 20)
 plt.yticks(fontsize = 20)
 plt.gca().grid(False)
 plt.gca().set_axis_bgcolor('white')
-save("Dend_0.8", path_to_json, ext="ps", close=False, verbose=True)
+# save("Dend_0.8", path_to_json, ext="ps", close=False, verbose=True)
 save("Dend_0.8", path_to_json, ext="png", close=True, verbose=True)
 ###############################################################
 ##### Shiftted plot
@@ -121,8 +122,6 @@ ax.spines['top'].set_visible(False)
 ax.yaxis.set_ticks_position('left')
 ax.xaxis.set_ticks_position('bottom')
 
-
-
 new_soma_trace = []
 for i in range(nfile-1):
     time1 = [x+330*i for x in new_time]
@@ -134,6 +133,7 @@ for i in range(nfile-1):
     # plt.ylabel('mV', fontsize = 23)
     plt.yticks(fontsize=23)
     plt.xlim([50, 3500])
+    plt.xticks(fontsize = 23)
     #plt.xlabel('Time (ms)', fontsize = 15)
     # plt.xticks([])
     # plt.yticks([])
@@ -144,8 +144,8 @@ for i in range(nfile-1):
     plt.xlabel('Time (ms)', fontsize = 23)
 
 title1 = "Soma_shift"
-save(title1, path_to_json, ext="png", close=False, verbose=True)
-save(title1, path_to_json, ext="ps", close=True, verbose=True)
+save(title1, path_to_json, ext="png", close=True, verbose=True)
+# save(title1, path_to_json, ext="ps", close=True, verbose=True)
 
 ############## Dend0.8
 plt.close()
@@ -172,6 +172,7 @@ for i in range(nfile-1):
     #plt.xlabel('Time (ms)', fontsize = 15)
     # plt.xticks([])
     # plt.yticks([])
+    plt.xticks(fontsize = 23)
     plt.gca().yaxis.grid(False)
     plt.gca().set_axis_bgcolor('white')
     #plt.gca().axes.get_xaxis().set_visible(False)
@@ -179,8 +180,8 @@ for i in range(nfile-1):
     plt.xlabel('Time (ms)', fontsize = 23)
 
 title2 = "Dend0.8_shift"
-save(title2, path_to_json, ext="png", close=False, verbose=True)
-save(title2, path_to_json, ext="ps", close=True, verbose=True)
+save(title2, path_to_json, ext="png", close=True, verbose=True)
+# save(title2, path_to_json, ext="ps", close=True, verbose=True)
 
 ############## Dend0.5
 plt.close()
@@ -204,18 +205,20 @@ for i in range(nfile-1):
     # plt.ylabel('mV', fontsize = 23)
     plt.yticks(fontsize=23)
     plt.xlim([50, 3500])
+    plt.xticks(fontsize = 23)
     #plt.xlabel('Time (ms)', fontsize = 15)
     # plt.xticks([])
     # plt.yticks([])
     plt.gca().yaxis.grid(False)
     plt.gca().set_axis_bgcolor('white')
+
     #plt.gca().axes.get_xaxis().set_visible(False)
     #plt.gca().axes.get_yaxis().set_visible(False)
     plt.xlabel('Time (ms)', fontsize = 23)
 
 title3 = "Dend0.5_shift"
-save(title3, path_to_json, ext="png", close=False, verbose=True)
-save(title3, path_to_json, ext="ps", close=True, verbose=True)
+save(title3, path_to_json, ext="png", close=True, verbose=True)
+# save(title3, path_to_json, ext="ps", close=True, verbose=True)
 
 ############## Dend0.3
 plt.close()
@@ -239,6 +242,7 @@ for i in range(nfile-1):
     # plt.ylabel('mV', fontsize = 23)
     plt.yticks(fontsize=23)
     plt.xlim([50, 3500])
+    plt.xticks(fontsize = 23)
     #plt.xlabel('Time (ms)', fontsize = 15)
     # plt.xticks([])
     # plt.yticks([])
@@ -249,5 +253,5 @@ for i in range(nfile-1):
     plt.xlabel('Time (ms)', fontsize = 23)
 
 title4 = "Dend0.3_shift"
-save(title4, path_to_json, ext="png", close=False, verbose=True)
-save(title4, path_to_json, ext="ps", close=True, verbose=True)
+save(title4, path_to_json, ext="png", close=True, verbose=True)
+# save(title4, path_to_json, ext="ps", close=True, verbose=True)

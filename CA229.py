@@ -1,12 +1,14 @@
 """
-CA229.py    : Reconstructed morphology of prefrontal layer V pyramidal cell from
-   Acker, Antic (2008)
+CA229.py
+: Reconstructed prefrontal layer V pyramidal neuron with detailed morphology
+and active channels  ---  Acker and Antic (2009)
+
 Original:
 https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=117207&file=/acker_antic/Model/CA%20229.hoc#tabs-2
-Modified by : Peng (Penny) Gao <penggao.1987@gmail.com>
+Modified by : Peng Penny Gao <penggao.1987@gmail.com>
 Feb 01, 2018
-The cell class has 3d morphology structure infomation.
-They can be placed in a network (logical 3d location).
+The cell class has 3d morphology infomation,
+and can be placed in a network (logical 3d location).
 
 Improved on March 01, 2018 to have better membrane time constant & resting membrane potential.
 Previous model has time constant ~ 6ms, most experimental data of
@@ -23,12 +25,14 @@ Vk = -87 :increased from -100 shift the RMP towards higher potential
 Vna = 75 :increased from 65
 pasVm = -65
 
-Update again on July 25, 2018. Srdjan would like to keep the original value for Vna
-Vna = 60 : same value as the 2009 model
-SomaNa = 600 : increased from 150 to get a similar bAP responses as the 2009 model
+Update again on July 25, 2018. Go back to the original value of Vna
+Vna = 60 : same as the 2009 model
+SomaNa = 900 : increased from 150 to get a similar bAP responses as the 2009 model
 
-Ref: https://neuroelectro.org/neuron/111/
-     https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=168148&file=/stadler2014_layerV/LayerVinit.hoc#tabs-2
+Ref:
+https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=117207&file=/acker_antic/Model/CA%20229.hoc#tabs-2
+https://neuroelectro.org/neuron/111/
+https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=168148&file=/stadler2014_layerV/LayerVinit.hoc#tabs-2
 
 """
 import sys
@@ -41,26 +45,21 @@ from math import sqrt, pi, log, exp
 #########################################
 # Cell passive properties
 global_Ra = 100
-spineFACTOR = 1.5 # It was 1.5 originally, in order to match the time constant,
-# We try to increase it on Feb.27, 2018 according to Reetz et al. (2014)
-somaRm = 1500/0.04 # Try 1500/0.04 on Feb.27, 2018, Original 1000/0.04
-dendRm = somaRm/spineFACTOR # somaRm/spineFACTOR
-somaCm = 1.45 # It was 1 originally, in order to increase the time constant,
-# We increased it on Marth 1, 2018 according to Reetz et al. (2014)
-############ This is where the problem comes from when i want the hyperpolarization
-# after spike change
-# If dendCm = somaCm*spineFACTOR: No hyperpolarization after spike on plateau at all
-# If dendCm = somaCm/spineFACTOR: Huge hyperpolarization!!!
+spineFACTOR = 1.5
+somaRm = 1500/0.04
+dendRm = somaRm/spineFACTOR
+somaCm = 1.45
+############
 dendCm = somaCm*spineFACTOR
-spinedist = 40 # distance at which spines start
+spinedist = 40 # distance from soma where the spines start
 Vk = -87
-VNa = 60 # 75
+VNa = 60
 pasVm = -65
 # Specify cell biophysics
-somaNa = 900 #150 # [pS/um2]
+somaNa = 900  # [pS/um2]
 axonNa = 5000   # [pS/um2]
-basalNa = 150 # It was 200 before July 24th: decreased to match the bAP [pS/um2]
-mNa = 0.5  # decrease in sodium channel conductance in basal dendrites [pS/um2/um]
+basalNa = 150 # Increased to 200 in Fig2. D2 - boosted gNa [pS/um2]
+mNa = 0.5 # decrease in sodium channel conductance in basal dendrites [pS/um2/um]
 apicalNa = 375
 gNamax = 2000  # maximum basal sodium conductance
 vshiftna = -10
@@ -68,29 +67,21 @@ somaKv = 40 # somatic, apical, and initial basal Kv conductance
 mKV = 0  # increase in KV conductance in basal dendrites
 gKVmax = 500  # maximum basal KV conductance
 axonKv = 100
-somaKA = 150 #100  # It was 150 in the best fit model from Srdjan 2009
-# In order to decrease the hyperpolirization after APs on plateau
-# decreased to 100 on Feb 27, 2018
-# Changed back to 150 on March 01, 2018
-
-# initial basal total GKA conductance [pS/um2] equals somatic
+somaKA = 150
 mgka = 0.7  # linear rise in IA channel density
 mgkaratio = 1./300 # linear drop in KAP portion, 1 at soma
 apicalKA = 300  # apical total GKA conductance
 gkamax = 2000  # pS/um2
-somaCa = 2 #0.5 # total calcium channel conductance density of soma [pS/um^2]
-# This value is original 2, set to 1 and 0.5 for better match with TTX trace
+somaCa = 2 # total calcium channel conductance density of soma [pS/um^2]
 dendCa = 0.4 # dendritic total calcium conductance density
-SomaCaT = 2
-# This value is original 8, set to 4,2,1 or 0 for better match with TTX trace
+SomaCaT = 2 # This value was original 8, decrease to 2 for better match
 dendCaT = 1.6
-cadistB = 30  # dendritic calcium channel conductance equals that of soma up until this distance
-cadistA = 30
-#gcaratio = 0.2 #portion of gHVA to gHVA+gIT total, 1 is all HVA, 0 is all IT
+cadistB = 30 # basal dendritic calcium channel conductance equals that of soma up until this distance
+cadistA = 30 # apical dendritic calcium channel conductance equals that of soma up until this distance
 gkl = 0.005
 ILdist = 15
 #############BK.mod
-kBK_gpeak = 2.68e-4 #7.68e-4 #7.67842640257e-05 # original value of 268e-4 too high for this model
+kBK_gpeak = 2.68e-4
 kBK_caVhminShift = 45 #shift upwards to get lower effect on subthreshold
 
 #########################################
@@ -99,30 +90,29 @@ kBK_caVhminShift = 45 #shift upwards to get lower effect on subthreshold
 
 class CA229:
     """
-    A detailed model of Prefrontal layer V pyramidal neuron in Mouse.
+    A detailed model of Prefrontal layer V pyramidal neuron in mice.
 
-    Channel distributions and all other biophysical properties of model basal
-    dendrites of prefrontal layer V pyramidal cell from Acker, Antic (2008)
-    Membrane Exitability and Action Potential Backpropagation in Basal Dendrites
-    of Prefrontal Cortical Pyramidal Neurons.
+    Channel distributions and other biophysical properties are from
+    the Acker and Antic 2009 model.
 
-    soma: soma compartments (soma[0] - soma[3])
-    apical: apical dendrites (apical[0] - apical[44])
-    basal: basal dendrites (basal[0] - basal[35])
-    basals: SectionList of all basal but excluing basal[16]
-    axon: SectionList of basal[16] (basal[16] is modeled as axon here)
-    all: SectionList of all the above compartments
+    Section name:
+        soma: soma compartments (soma[0] - soma[3])
+        apical: apical dendrites (apical[0] - apical[44])
+        basal: basal dendrites (basal[0] - basal[35])
+        basals: SectionList of all basal but excluing basal[16]
+        axon: SectionList of basal[16] (basal[16] is modeled as axon here)
+        all: SectionList of all the above compartments
     """
 
     #############
-    def __init__(self, Na_ratio = 1.0, HVA_ratio = 1.0, LVA_ratio = 1.0, KA_ratio = 1.0, BK_ratio = 1.0, SK_ratio = 1.0):
+    def __init__(self, Na_ratio = 1.0, HVA_ratio = 1.0, LVA_ratio = 1.0,
+    KA_ratio = 1.0, BK_ratio = 1.0):
         # Define the ratio of parameters to adjust systematically
         self.Na_ratio = Na_ratio
         self.HVA_ratio = HVA_ratio
         self.LVA_ratio = LVA_ratio
         self.KA_ratio = KA_ratio
         self.BK_ratio = BK_ratio
-        self.SK_ratio = SK_ratio
         self.create_cell()
         self.optimize_nseg()
         self.add_axon()
@@ -138,10 +128,9 @@ class CA229:
         self.distspines()
         self.add_ih()
         self.add_CaK()
-        # self.add_SK()
 
     ###################
-    # Set up nseg number
+    # Set up nseg numbers for each branch
     ###################
     def geom_nseg (self):
         # local freq, d_lambda, before, after, tmp
@@ -151,13 +140,12 @@ class CA229:
         before = 0
         after = 0
         for sec in self.all: before += sec.nseg
-        #soma area(0.5) # make sure diam reflects 3d points
         for sec in self.all:
             # creates the number of segments per section
             # lambda_f takes in the current section
             sec.nseg = int((sec.L/(d_lambda*self.lambda_f(sec))+0.9)/2)*2 + 1
         for sec in self.all: after += sec.nseg
-        print "geom_nseg: ", after, " total segments"
+        # print "geom_nseg: ", after, " total segments"
 
     def lambda_f (self, section):
         # these are reasonable values for most models
@@ -185,7 +173,7 @@ class CA229:
         """
         Set up nseg
         """
-        # Set up sectionList - easy to modify properties
+        # Set up sectionList - easy to modify the properties of all branches
         self.all = h.SectionList()
         self.all_no_axon = h.SectionList()
         for section in self.soma:
@@ -206,7 +194,8 @@ class CA229:
             self.all_no_axon.append(sec = section)
 
         for sec in self.all:
-            # Set up Ra and cm first, since the nseg calculation depends on the value of Ra and cm
+            # Set up Ra and cm first:
+            # the nseg calculation depends on the value of Ra and cm
             sec.Ra = global_Ra
             sec.cm = 1
         # give each compartment segment number
@@ -232,7 +221,7 @@ class CA229:
                 self.basal[16](seg.x).diam = 0.96
 
     ###################
-    # Add basic properties
+    # Add channel properties
     ###################
     def add_all(self):
         for sec in self.all:
@@ -246,7 +235,6 @@ class CA229:
             h.vshift_na = vshiftna
             sec.ek = Vk
             sec.insert('kv')
-
 
         for sec in self.all_no_axon:
             sec.insert('kap')
@@ -268,7 +256,7 @@ class CA229:
             h.taur_cad = 100
 
     ###################
-    # Set up properties only in soma
+    # Set up channel properties only in soma
     ###################
     def addsomachan(self):
         for sec in self.soma:
@@ -276,21 +264,21 @@ class CA229:
             sec.g_pas = 1./somaRm
 
     ###################
-    # Set up properties only in apical dendrites
+    # Set up channel properties only in apical dendrites
     ###################
     def addapicalchan(self):
         for sec in self.apical:
             sec.insert('kad')
 
     ###################
-    # Set up properties only in basal dendrites
+    # Set up channel properties only in basal dendrites
     ###################
     def addbasalchan(self):
         for sec in self.basals:
             sec.insert('kad')
 
     ###################
-    # Set up properties only in axon
+    # Set up channel properties only in axon
     ###################
     def addaxonchan(self):
         for sec in self.axon:
@@ -309,7 +297,7 @@ class CA229:
                     sec(seg.x).gbar_kl = 0
 
 #########################################
-# Distribution of sodium channels
+# Distribution of sodium channel density
 #########################################
     def gna_control(self):
         for sec in self.soma:
@@ -344,7 +332,7 @@ class CA229:
             sec.gbar_na = apicalNa * self.Na_ratio
 
 #########################################
-# Distribution of potassium channels
+# Distribution of potassium channel density
 #########################################
     def distKV(self):
         for sec in self.soma:
@@ -370,7 +358,7 @@ class CA229:
             sec.gbar_kv = somaKv
 
 #########################################
-# Distribution of potassium channels
+# Distribution of A-type potassium channel density
 #########################################
     def distKA(self):
 
@@ -410,7 +398,7 @@ class CA229:
                 sec(seg.x).gkabar_kad = apicalKA*(1-ratio)/1e4 * self.KA_ratio
 
 #########################################
-# Distribution of Ca channels
+# Distribution of Ca channel density
 #########################################
     def distCa(self):
         for sec in self.soma:
@@ -440,7 +428,7 @@ class CA229:
                     sec(seg.x).gbar_it = SomaCaT/1e4 * self.LVA_ratio
 
 #########################################
-# Distribution of spines on dendrites (This should be optimized!!!)
+# Distribution of spines on dendrites
 #########################################
     def distspines(self):
         for sec in self.basals:
@@ -485,7 +473,7 @@ class CA229:
                 sec(seg.x).gIhbar_Ih = 0.0002*(-0.8696 + 2.0870*exp(dist/323))
 
 #########################################
-# Add calcium activated potassium current
+# Add calcium activated potassium channels
 #########################################
     def add_CaK(self, ratio = 1.0):
         for sec in self.apical:
@@ -502,23 +490,7 @@ class CA229:
             sec.caVhmin_kBK = -46.08 + kBK_caVhminShift
 
 #########################################
-# Add SK-type calcium activated potassium current
-#########################################
-    def add_SK(self, ratio = 1.0):
-        # for sec in self.axon:
-        #     sec.insert('SK_E2')
-        #     sec.gSK_E2bar_SK_E2 = 0.00000047 * self.SK_ratio
-        # for sec in self.soma:
-        #     sec.insert('SK_E2')
-        #     sec.gSK_E2bar_SK_E2 = 0.00000065 * self.SK_ratio
-        for sec in self.apical:
-            sec.insert('SK_E2')
-            sec.gSK_E2bar_SK_E2 = 0.000002 * self.SK_ratio
-        for sec in self.basals:
-            sec.insert('SK_E2')
-            sec.gSK_E2bar_SK_E2 = 0.0000001 * self.SK_ratio
-#########################################
-# TTX
+# Model the experiment with TTX application
 #########################################
     def TTX(self):
         for sec in self.all:
@@ -541,6 +513,7 @@ class CA229:
         for sec in self.basals:
             sec.gbar_ca = 0
             sec.gbar_it = 0
+
 #########################################
 # 3D geometry of the cell
 #########################################

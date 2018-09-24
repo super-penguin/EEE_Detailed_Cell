@@ -12,11 +12,9 @@ Bin size = 20 um
 Final plot: x = mean distance in each bin
             y = mean of AP amp or AP latency in each bin
 
-Author: Peng (Penny) Gao
+Author: Peng Penny Gao
 penggao.1987@gmail.com
 """
-import sys
-sys.path.append("..")
 import json
 import matplotlib.pyplot as plt
 import os
@@ -32,11 +30,9 @@ import itertools
 # Save the analysed results
 #################################
 new_data = pd.DataFrame(columns = ['Bnum', 'condition', 'dist', 'Peak_amp', 'Peak_t', 'Soma_v'])
-path_to_json = 'Data_07_27/'
+path_to_json = 'Fig2/'
 start_time = time.time()
 json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
-
-# print json_files
 
 i = 0
 for index, js in enumerate(json_files):
@@ -58,30 +54,19 @@ for index, js in enumerate(json_files):
             i += 1
             new_data.loc[i] = [Bnum, condition, dist, dend_v, peak_del, soma_v]
 
-
 df = new_data.sort_values(by = ['dist'])
 savepath = path_to_json + 'bAP_total_results.csv'
 df.to_csv(savepath)
 
-# df_con = df[df['condition'] == 'Control']
-# df_TTX = df[df['condition'] == 'TTX']
-# df_4AP = df[df['condition'] == '4AP']
-
 #################################
 # Combine data and plot
 #################################
-# path1 = 'Data_07_09/' + 'bAP_total_results.csv'
-# path2 = 'Data_07_10/' + 'bAP_total_results.csv'
-# df1 = pd.read_csv(path1, index_col = 0)
-# df2 = pd.read_csv(path2, index_col = 0)
-# df = pd.concat([df1, df2],ignore_index=True)
 path = path_to_json + 'bAP_total_results.csv'
 df = pd.read_csv(path, index_col = 0)
-# df.set_index(['Bnum'], inplace=True)
-df_con = df[df['condition'] == 'Control'].sort_values(by = ['dist','Bnum'],ascending=True)
+df.set_index(['Bnum'], inplace=True)
+df_con = df[df['condition'] == 'Control'].sort_values(by = ['dist'],ascending=True)
 df_TTX = df[df['condition'] == 'TTX'].sort_values(by = ['dist'],ascending=True)
 df_4AP = df[df['condition'] == '4AP'].sort_values(by = ['dist'],ascending=True)
-
 
 ##### Bin the data
 def map_bin(x, bins):
@@ -105,7 +90,7 @@ df_con['Binned'] = df_con['dist'].apply(map_bin, bins=freq_bins)
 df_TTX['Binned'] = df_TTX['dist'].apply(map_bin, bins=freq_bins)
 df_4AP['Binned'] = df_4AP['dist'].apply(map_bin, bins=freq_bins)
 
-df_con_group = df_con.groupby('Binned').mean()
+df_con_group = df_con.groupby(['Binned'], sort=True).mean()
 df_con_group = df_con_group.sort_values(by = ['dist']).iloc[0:12]
 df_TTX_group = df_TTX.groupby('Binned').mean()
 df_TTX_group = df_TTX_group.sort_values(by = ['dist']).iloc[0:12]
@@ -113,8 +98,9 @@ df_4AP_group = df_4AP.groupby('Binned').mean()
 df_4AP_group = df_4AP_group.sort_values(by = ['dist']).iloc[0:12]
 
 
+#################################
+# Plot and save the figures
 path_to_figure = path_to_json + 'New_Figs/'
-
 plt.close()
 plt.clf()
 plt.figure(figsize = (9,6), dpi = 300)
@@ -143,7 +129,7 @@ plt.yticks(np.arange(20, 110, 20))
 # ax.grid(False)
 ax.set_axis_bgcolor('white')
 title1 = "bAP_Amplitude"
-save(title1, path_to_figure, ext="pdf", close=False, verbose=True)
+# save(title1, path_to_figure, ext="pdf", close=False, verbose=True)
 save(title1, path_to_figure, ext="png", close=True, verbose=True)
 
 
@@ -175,5 +161,5 @@ plt.ylim([0, 1.5])
 # ax.grid(False)
 ax.set_axis_bgcolor('white')
 title2 = "bAP_Latency"
-save(title2, path_to_figure, ext="pdf", close=False, verbose=True)
+# save(title2, path_to_figure, ext="pdf", close=False, verbose=True)
 save(title2, path_to_figure, ext="png", close=True, verbose=True)

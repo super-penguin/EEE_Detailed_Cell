@@ -2,14 +2,11 @@
 Simulation of bAP to basal dendrite in the detailed cell model
 The orginal model is from
 https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=117207&file=/acker_antic/Model/CA%20229.hoc#tabs-2
-Modified by : Peng (Penny) Gao <penggao.1987@gmail.com>
+Modified by : Peng Penny Gao <penggao.1987@gmail.com>
 
 1. Run 3 different condition: TTX, 3-AP and control
 2. Run on all basal branches
 """
-import sys
-sys.path.append("..")
-
 from CA229 import *
 import matplotlib.pyplot as plt
 from neuron import h
@@ -33,7 +30,8 @@ def bAP(Bnum = 34, TTX = False, Atype = False, vec = []):
     """
     timestr = time.strftime("%H%M")
     data = time.strftime("%m_%d")
-    directory = 'Data_' + data +'/'
+    directory = 'Fig2/'
+    # directory = 'Data_' + data +'/'
     Cell = CA229()
     ###########################################
     if (TTX == False and Atype == False):

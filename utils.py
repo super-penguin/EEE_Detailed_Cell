@@ -1,3 +1,9 @@
+"""
+Save figures and data for simulations
+
+Author: Peng Penny Gao
+penggao.1987@gmail.com
+"""
 import os
 import matplotlib.pyplot as plt
 import json
