@@ -3,4 +3,3 @@ x86_64
 *.pyc
 **/batch_data/*
 **/batch_figs/*
-Data*
