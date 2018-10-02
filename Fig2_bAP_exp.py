@@ -7,16 +7,15 @@ Modified by : Peng Penny Gao <penggao.1987@gmail.com>
 1. Run 3 different condition: TTX, 3-AP and control
 2. Run on all basal branches
 """
-from CA229 import *
+import CA229 as de # detailed cell model
 import matplotlib.pyplot as plt
 from neuron import h
 import numpy as np
-from utils import *
+import utils as ut
 import json
 import itertools
 import time
 # import pdb     # For python debugging
-from random import *
 
 h.load_file('stdrun.hoc') # for initialization
 
@@ -32,7 +31,7 @@ def bAP(Bnum = 34, TTX = False, Atype = False, vec = []):
     data = time.strftime("%m_%d")
     directory = 'Fig2/'
     # directory = 'Data_' + data +'/'
-    Cell = CA229()
+    Cell = de.CA229()
     ###########################################
     if (TTX == False and Atype == False):
         title = "Control_" + "Bnum_" + str(Bnum) + "_" + timestr
@@ -51,7 +50,7 @@ def bAP(Bnum = 34, TTX = False, Atype = False, vec = []):
         vec.play(Vstim._ref_amp1, h.dt)
         title = "TTX_" + "Bnum_" + str(Bnum) + "_" + timestr
     else:
-        Cell = CA229(KA_ratio = 0.0)
+        Cell = de.CA229(KA_ratio = 0.0)
         ic = h.IClamp(Cell.soma[2](0.5))
         ic.dur = 1.75
         ic.delay = 150
@@ -100,10 +99,10 @@ def bAP(Bnum = 34, TTX = False, Atype = False, vec = []):
     # plt.ylabel('mV')
     # plt.xlabel('Time (ms)')
     # plt.title ("bAP")
-    # save(title, directory, ext="png", close=True, verbose=True)
+    # ut.save(title, directory, ext="png", close=True, verbose=True)
 
     #######################
-    data = Vividict()
+    data = ut.Vividict()
     data['Bnum'] = Bnum
     data['Loc'] = Loc
     data['dist'] = dist
@@ -111,7 +110,7 @@ def bAP(Bnum = 34, TTX = False, Atype = False, vec = []):
     data['recording']['soma']['voltage'] = list(v_vec_soma)
     for index, dist in enumerate(dist):
         data['recording']['dend']["{0:.2f}".format(dist)] = list(v_vec_dend[index])
-    savejson(data, title, directory, ext = "json", verbose = False)
+    ut.savejson(data, title, directory, ext = "json", verbose = False)
 
     if (TTX == False and Atype == False):
         return v_vec_soma

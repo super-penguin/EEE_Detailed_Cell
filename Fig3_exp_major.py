@@ -8,16 +8,16 @@ Modified by : Peng Penny Gao <penggao.1987@gmail.com>
 
 Run simulation with NMDAmajor.mod file
 """
-from CA229 import *
+import CA229 as de # from CA229 import *
 import matplotlib.pyplot as plt
 from neuron import h
 import numpy as np
-from utils import *
+import utils as ut #from utils import *
 import json
 import itertools
 import time
 # import pdb     # For python debugging
-from random import *
+# from random import *
 
 h.load_file('stdrun.hoc') # for initialization
 
@@ -63,7 +63,7 @@ def Glu_Stim(TTX = False, Pool1_num = 9, Pool2_num = 9, Syn_w1 = 0.01, Syn_w2 = 
         json: soma and dendritc voltage recording and parameters info
     """
 
-    Cell = CA229()
+    Cell = de.CA229()
     # Can adjust channel conductance ratio here:
     # eg. Cell = CA229(KA_ratio = 0.5)
     ###########################################
@@ -184,7 +184,7 @@ def Glu_Stim(TTX = False, Pool1_num = 9, Pool2_num = 9, Syn_w1 = 0.01, Syn_w2 = 
     # plt.xlabel('Time (ms)')
     # plt.title ("Glumate Receptor Activated Plateau Potential")
     #
-    # save(title, directory, ext="png", close=True, verbose=True)
+    # ut.save(title, directory, ext="png", close=True, verbose=True)
 
     #######################
     # Plot the intracelluar calcium concentration
@@ -201,10 +201,10 @@ def Glu_Stim(TTX = False, Pool1_num = 9, Pool2_num = 9, Syn_w1 = 0.01, Syn_w2 = 
     # plt.xlabel('Time (ms)')
     # plt.title ("Calcium concentration")
     # title1 = "Calcium_" + title
-    # save(title1, directory, ext="png", close=True, verbose=True)
+    # ut.save(title1, directory, ext="png", close=True, verbose=True)
 
 
-    data = Vividict()
+    data = ut.Vividict()
     data['SynAMPA']['num'] = Pool1_num
     data['SynAMPA']['locs'] = loc1
     data['SynAMPA']['weight'] = Syn_w1
@@ -227,7 +227,7 @@ def Glu_Stim(TTX = False, Pool1_num = 9, Pool2_num = 9, Syn_w1 = 0.01, Syn_w2 = 
     data['recording']['soma']['ica'] = list(cai_soma)
     data['recording']['basal_34']['ica_0.3'] = list(cai_dend)
 
-    savejson(data, title, directory, ext = "json", verbose = False)
+    ut.savejson(data, title, directory, ext = "json", verbose = False)
 
 ######################################################
 if __name__ == "__main__":

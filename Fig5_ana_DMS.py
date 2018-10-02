@@ -11,10 +11,10 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 import pandas as pd
-from analysis_utils import *
-from utils import *
+import analysis_utils as ana # from analysis_utils import *
+# import utils as ut # from utils import *
 import seaborn as sns
-
+import time
 
 ######################################################
 def analysis_N(Bnum = 'B34', path = "Fig5/DMS/"):
@@ -39,9 +39,9 @@ def analysis_N(Bnum = 'B34', path = "Fig5/DMS/"):
                 NMDA_num = data['SynNMDA']['num']
                 NMDA_locs = data['SynNMDA']['locs']
                 NMDA_weight = data['SynNMDA']['weight']
-                spike_num = spike_count(data['recording']['soma']['voltage'])
-                idx, soma_platamp = soma_plat(data['recording']['soma']['voltage'])
-                dend_platamp, dend_platdur = dend_plat(data['recording']['basal']['voltage_input'], idx)
+                spike_num = ana.spike_count(data['recording']['soma']['voltage'])
+                idx, soma_platamp = ana.soma_plat(data['recording']['soma']['voltage'])
+                dend_platamp, dend_platdur = ana.dend_plat(data['recording']['basal']['voltage_input'], idx)
                 soma_platdur = dend_platdur
 
                 new_data.loc[index + i*num] = [TTX, Bnum, Loc, AMPA_num, AMPA_locs, AMPA_weight,
@@ -75,9 +75,9 @@ def analysis_TTX(Bnum = 'B34', path = "Fig5/DMS/"):
                 NMDA_locs = data['SynNMDA']['locs']
                 NMDA_weight = data['SynNMDA']['weight']
                 spike_num = 0
-                idx, soma_platamp = soma_platamp_TTX(data['recording']['soma']['voltage'])
-                soma_platdur = soma_platdur_TTX(data['recording']['soma']['voltage'])
-                dend_platamp, dend_platdur =  TTX_dend_plat(data['recording']['basal']['voltage_input'], idx)
+                idx, soma_platamp = ana.soma_platamp_TTX(data['recording']['soma']['voltage'])
+                soma_platdur = ana.soma_platdur_TTX(data['recording']['soma']['voltage'])
+                dend_platamp, dend_platdur =  ana.TTX_dend_plat(data['recording']['basal']['voltage_input'], idx)
 
                 new_data.loc[index + i*num] = [TTX, Bnum, Loc, AMPA_num, AMPA_locs, AMPA_weight, NMDA_num, NMDA_locs, NMDA_weight,  spike_num, soma_platamp, soma_platdur, dend_platamp, dend_platdur]
         i = i + 1

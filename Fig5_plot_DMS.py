@@ -26,7 +26,7 @@ import pandas as pd
 # sys.path.append('../')
 from analysis_utils import tableau
 import seaborn as sns
-from utils import *
+import utils as ut #from utils import *
 
 ##############
 # Load dist info
@@ -121,7 +121,7 @@ ax.set_ylim([0, 30])
 name = "Soma_Dist_Platamp_BW"
 # save(name, path, ext = 'ps', close = False, verbose = True)
 # save(name, path, ext = 'pdf', close = False, verbose = True)
-save(name, path, ext = 'png', close = True, verbose = True)
+ut.save(name, path, ext = 'png', close = True, verbose = True)
 
 ##############
 # Generating figs - plot plateau duration against input distance from soma
@@ -174,7 +174,7 @@ ax.set_ylim([0, 400])
 name = "Dist_Platdur_BW"
 # save(name, path, ext = 'ps', close = False, verbose = True)
 # save(name, path, ext = 'pdf', close = False, verbose = True)
-save(name, path, ext = 'png', close = True, verbose = True)
+ut.save(name, path, ext = 'png', close = True, verbose = True)
 
 
 ##############
@@ -229,4 +229,4 @@ ax.set_ylim([0, 80])
 name = "Dend_Dist_Platamp_BW"
 # save(name, path, ext = 'ps', close = False, verbose = True)
 # save(name, path, ext = 'pdf', close = False, verbose = True)
-save(name, path, ext = 'png', close = True, verbose = True)
+ut.save(name, path, ext = 'png', close = True, verbose = True)

@@ -15,10 +15,12 @@ from pprint import pprint
 import os
 import numpy as np
 import pandas as pd
-from analysis_utils import *
+import analysis_utils as ana
+#from analysis_utils import *
 from analysis_utils import tableau
-from utils import *
+import utils as ut #from utils import *
 import seaborn as sns
+import time
 
 ######################################################
 # Analysis for Model 1
@@ -42,9 +44,9 @@ for index, js in enumerate(json_files):
         NMDA_weight = data['SynNMDA']['weight']
         NMDA_Beta = data['SynNMDA']['Beta']
         NMDA_Cdur = data['SynNMDA']['Cdur']
-        spike_num = spike_count(data['recording']['soma']['voltage'])
-        ISI, platamp = meas_platamp(data['recording']['soma']['voltage'])
-        platdur = meas_platdur(data['recording']['soma']['voltage'])
+        spike_num = ana.spike_count(data['recording']['soma']['voltage'])
+        ISI, platamp = ana.meas_platamp(data['recording']['soma']['voltage'])
+        platdur = ana.meas_platdur(data['recording']['soma']['voltage'])
         # For TTX
         # platamp = TTX_platamp(data['recording']['soma']['voltage'])
         # ISI = 0
@@ -80,9 +82,9 @@ for index, js in enumerate(json_files):
         NMDA_weight = data['SynNMDA']['weight']
         # NMDA_Beta = data['SynNMDA']['Beta']
         # NMDA_Cdur = data['SynNMDA']['Cdur']
-        spike_num = spike_count(data['recording']['soma']['voltage'])
-        ISI, platamp = meas_platamp(data['recording']['soma']['voltage'])
-        platdur = meas_platdur(data['recording']['soma']['voltage'])
+        spike_num = ana.spike_count(data['recording']['soma']['voltage'])
+        ISI, platamp = ana.meas_platamp(data['recording']['soma']['voltage'])
+        platdur = ana.meas_platdur(data['recording']['soma']['voltage'])
         # For TTX
         # platamp = TTX_platamp(data['recording']['soma']['voltage'])
         # ISI = 0
@@ -133,7 +135,7 @@ ax.set_axis_bgcolor('white')
 plt.legend(loc = 'best', fontsize = 22)
 title = "Platamp_Model_B&W"
 # save(title, savepath, ext="pdf", close=False, verbose=True)
-save(title, savepath, ext="png", close=True, verbose=True)
+ut.save(title, savepath, ext="png", close=True, verbose=True)
 ###################################################
 plt.close()
 plt.clf()
@@ -163,7 +165,7 @@ ax.set_axis_bgcolor('white')
 plt.legend(loc = 'best', fontsize = 22)
 title = "Platdur_Model_B&W"
 # save(title, savepath, ext="pdf", close=False, verbose=True)
-save(title, savepath, ext="png", close=True, verbose=True)
+ut.save(title, savepath, ext="png", close=True, verbose=True)
 
 ###################################################
 plt.close()
@@ -194,4 +196,4 @@ plt.legend(loc = 'best', fontsize = 22)
 ax.set_axis_bgcolor('white')
 title = "SpikeNum_Model_B&W"
 # save(title, savepath, ext="pdf", close=False, verbose=True)
-save(title, savepath, ext="png", close=True, verbose=True)
+ut.save(title, savepath, ext="png", close=True, verbose=True)

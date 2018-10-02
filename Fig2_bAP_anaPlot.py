@@ -20,10 +20,12 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 import pandas as pd
-from analysis_utils import *
-from utils import *
+import analysis_utils as ana
+from analysis_utils import tableau #from analysis_utils import *
+import utils as ut #from utils import *
 import seaborn as sns
 import itertools
+import time
 
 #################################
 # Analysis all the json files with recording to get AP peak time and peak Amplitude against dist to soma
@@ -45,11 +47,11 @@ for index, js in enumerate(json_files):
         else:
             condition = 'Control'
         Bnum = data['Bnum']
-        soma_v, soma_t = single_spike(data['recording']['soma']['voltage'])
+        soma_v, soma_t = ana.single_spike(data['recording']['soma']['voltage'])
 
         for key, value in data['recording']['dend'].iteritems():
             dist = key
-            dend_v, dend_t = single_spike(value)
+            dend_v, dend_t = ana.single_spike(value)
             peak_del = dend_t - soma_t
             i += 1
             new_data.loc[i] = [Bnum, condition, dist, dend_v, peak_del, soma_v]
@@ -129,8 +131,8 @@ plt.yticks(np.arange(20, 110, 20))
 # ax.grid(False)
 ax.set_axis_bgcolor('white')
 title1 = "bAP_Amplitude"
-# save(title1, path_to_figure, ext="pdf", close=False, verbose=True)
-save(title1, path_to_figure, ext="png", close=True, verbose=True)
+# ut.save(title1, path_to_figure, ext="pdf", close=False, verbose=True)
+ut.save(title1, path_to_figure, ext="png", close=True, verbose=True)
 
 
 plt.close()
@@ -162,4 +164,4 @@ plt.ylim([0, 1.5])
 ax.set_axis_bgcolor('white')
 title2 = "bAP_Latency"
 # save(title2, path_to_figure, ext="pdf", close=False, verbose=True)
-save(title2, path_to_figure, ext="png", close=True, verbose=True)
+ut.save(title2, path_to_figure, ext="png", close=True, verbose=True)

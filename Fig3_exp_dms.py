@@ -8,16 +8,16 @@ Modified by : Peng Penny Gao <penggao.1987@gmail.com>
 
 Run simulation with NMDA.mod file - DMS model
 """
-from CA229 import *
+import CA229 as de # from CA229 import *
 import matplotlib.pyplot as plt
 from neuron import h
 import numpy as np
-from utils import *
+import utils as ut #from utils import *
 import json
 import itertools
 import time
 # import pdb     # For python debugging
-from random import *
+#from random import *
 
 h.load_file('stdrun.hoc') # for initialization
 
@@ -66,7 +66,7 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
         Figures: recording from soma and 3 different locations from basal dendrites
         json: soma and dendritc voltage recording and parameters info
     """
-    Cell = CA229()
+    Cell = de.CA229()
     # Can adjust channel conductance ratio here:
     # eg. Cell = CA229(KA_ratio = 0.5)
     ###########################################
@@ -209,9 +209,9 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     # plt.xlabel('Time (ms)')
     # plt.title ("Calcium concentration")
     # title1 = "Calcium_" + title
-    # save(title1, directory, ext="png", close=True, verbose=True)
+    # ut.save(title1, directory, ext="png", close=True, verbose=True)
 
-    data = Vividict()
+    data = ut.Vividict()
     data['SynAMPA']['num'] = Pool1_num
     data['SynAMPA']['locs'] = loc1
     data['SynAMPA']['weight'] = Syn_w1
@@ -235,7 +235,7 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     data['recording']['basal_34']['ica_0.3'] = list(cai_dend)
 
 
-    savejson(data, title, directory, ext = "json", verbose = False)
+    ut.savejson(data, title, directory, ext = "json", verbose = False)
 
 ######################################################
 if __name__ == "__main__":

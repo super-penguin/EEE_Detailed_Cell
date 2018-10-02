@@ -9,16 +9,16 @@ measure the plateau amplitude and duration.
 Author: Peng Penny Gao
 <penggao.1987@gmail.com>
 """
-from CA229 import *
+import CA229 as de # from CA229 import *
 import matplotlib.pyplot as plt
 from neuron import h
 import numpy as np
-from utils import *
+import utils as ut #from utils import *
 import json
 import itertools
 import time
 import pdb     # For python debugging
-from random import *
+# from random import *
 
 h.load_file('stdrun.hoc') # for initialization
 
@@ -54,7 +54,7 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6], DenLoc = 0.5):
         Figures: recording from soma and 3 different locations from basal dendrites
         json: soma and dendritc voltage recording and parameters info
     """
-    Cell = CA229()
+    Cell = de.CA229()
     timestr = time.strftime("%Y%m%d-%H%M")
     data = time.strftime("%m_%d")
     directory_root = "Fig5/Major/"
@@ -164,7 +164,7 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6], DenLoc = 0.5):
     # plt.title ("Glumate Receptor Activated Plateau Potential")
     # save(title, directory, ext="png", close=True, verbose=True)
 
-    data = Vividict()
+    data = ut.Vividict()
     data['TTX'] = TTX
     data['SynAMPA']['num'] = Pool1_num
     data['SynAMPA']['locs'] = Loc
@@ -183,7 +183,7 @@ Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6], DenLoc = 0.5):
     data['recording']['basal']['voltage_0.3'] = list(v_vec_dend3)
     data['recording']['basal']['voltage_input'] = list(v_vec_dend)
 
-    savejson(data, title, directory, ext = "json", verbose = False)
+    ut.savejson(data, title, directory, ext = "json", verbose = False)
 ######################################################
 if __name__ == "__main__":
     print("Running the model")

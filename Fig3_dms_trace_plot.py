@@ -12,9 +12,9 @@ from pprint import pprint
 import os
 import numpy as np
 import pandas as pd
-from analysis_utils import *
+# from analysis_utils import *
 from analysis_utils import tableau
-from utils import *
+import utils as ut #from utils import *
 import seaborn as sns
 
 
@@ -57,7 +57,7 @@ plt.yticks(fontsize = 20)
 plt.gca().grid(False)
 plt.gca().set_axis_bgcolor('white')
 # save("Simulated_Trace", path_to_json, ext="ps", close=False, verbose=True)
-save("Simulated_Trace", path_to_json, ext="png", close=True, verbose=True)
+ut.save("Simulated_Trace", path_to_json, ext="png", close=True, verbose=True)
 ###############################################################
 ##### Overlay trace plot - dend0.3
 ###############################################################
@@ -74,7 +74,7 @@ plt.yticks(fontsize = 20)
 plt.gca().grid(False)
 plt.gca().set_axis_bgcolor('white')
 # save("Dend_0.3", path_to_json, ext="ps", close=False, verbose=True)
-save("Dend_0.3", path_to_json, ext="png", close=True, verbose=True)
+ut.save("Dend_0.3", path_to_json, ext="png", close=True, verbose=True)
 ###############################################################
 ##### Overlay trace plot - dend0.5
 ###############################################################
@@ -91,7 +91,7 @@ plt.yticks(fontsize = 20)
 plt.gca().grid(False)
 plt.gca().set_axis_bgcolor('white')
 # save("Dend_0.5", path_to_json, ext="ps", close=False, verbose=True)
-save("Dend_0.5", path_to_json, ext="png", close=True, verbose=True)
+ut.save("Dend_0.5", path_to_json, ext="png", close=True, verbose=True)
 ###############################################################
 ##### Overlay trace plot - dend0.8
 ###############################################################
@@ -108,7 +108,7 @@ plt.yticks(fontsize = 20)
 plt.gca().grid(False)
 plt.gca().set_axis_bgcolor('white')
 # save("Dend_0.8", path_to_json, ext="ps", close=False, verbose=True)
-save("Dend_0.8", path_to_json, ext="png", close=True, verbose=True)
+ut.save("Dend_0.8", path_to_json, ext="png", close=True, verbose=True)
 ###############################################################
 ##### Shiftted plot
 ###############################################################
@@ -144,7 +144,7 @@ for i in range(nfile-1):
     plt.xlabel('Time (ms)', fontsize = 23)
 
 title1 = "Soma_shift"
-save(title1, path_to_json, ext="png", close=True, verbose=True)
+ut.save(title1, path_to_json, ext="png", close=True, verbose=True)
 # save(title1, path_to_json, ext="ps", close=True, verbose=True)
 
 ############## Dend0.8
@@ -180,7 +180,7 @@ for i in range(nfile-1):
     plt.xlabel('Time (ms)', fontsize = 23)
 
 title2 = "Dend0.8_shift"
-save(title2, path_to_json, ext="png", close=True, verbose=True)
+ut.save(title2, path_to_json, ext="png", close=True, verbose=True)
 # save(title2, path_to_json, ext="ps", close=True, verbose=True)
 
 ############## Dend0.5
@@ -217,7 +217,7 @@ for i in range(nfile-1):
     plt.xlabel('Time (ms)', fontsize = 23)
 
 title3 = "Dend0.5_shift"
-save(title3, path_to_json, ext="png", close=True, verbose=True)
+ut.save(title3, path_to_json, ext="png", close=True, verbose=True)
 # save(title3, path_to_json, ext="ps", close=True, verbose=True)
 
 ############## Dend0.3
@@ -253,5 +253,5 @@ for i in range(nfile-1):
     plt.xlabel('Time (ms)', fontsize = 23)
 
 title4 = "Dend0.3_shift"
-save(title4, path_to_json, ext="png", close=True, verbose=True)
+ut.save(title4, path_to_json, ext="png", close=True, verbose=True)
 # save(title4, path_to_json, ext="ps", close=True, verbose=True)
