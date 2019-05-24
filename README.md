@@ -1,6 +1,6 @@
 # Embedded Ensemble Encoding (EEE)
 
-This repo is for the detailed cell model CA229. It includes the simulation, analysis and plotting files to generate paper figures.
+This repo is for the detailed cell model CA229. It includes the simulation, analysis and plotting files to generate paper figures. The code is in python version 2.7 and using NEURON version 7.4, 7.5, or 7.6.
 
 ## Description
     Both synaptic AMPARs/NMDARs and exsynaptic NMDARs are activated by one NetStim.
@@ -68,18 +68,21 @@ This repo is for the detailed cell model CA229. It includes the simulation, anal
 2. Fig 2.B2 and B3 (the study of backpropagated action potential)
     - Run: "Fig2_bAP_exp.py"
     run the simulation and save the data in folder "Fig2/"
+    This step take ~ 426 seconds on a macbook pro (2018) with processor 2.9 GHz Intel Core i9.
     - Run: "Fig2_bAP_anaPlot.py"
     Analyze the data, plot and save figures in "Fig2/New_Figs/"
 
 3. Fig 3. A2 and B2 - Trace plots
     - Run: "Fig3_exp_dms.py" or "Fig3_exp_major.py"
     run the simulation and save the data in folder "Fig3/DMS/Plot/" or "Fig3/Major/Plot/"
+    This step take ~ 251 seconds on a macbook pro (2018) with processor 2.9 GHz Intel Core i9.
     - Run: "Fig3_dms_trace_plot.py" or "Fig3_major_trace_plot.py"
     plot the traces and save the figures in folder "Fig3/DMS/Plot/" or "Fig3/Major/Plot/"
 
 3. Fig 3. D1 - D3 - analysis plots
     - Open "Fig3_exp_dms.py", add # before the code at line 77, remove # before the code in line 78;
-    add # before the code at line 247, remove # before the code in line 249.
+    add # before the code at line 254, remove # before the code in line 256.
+    This step take ~ 367 seconds on a macbook pro (2018) with processor 2.9 GHz Intel Core i9.
     - Open "Fig3_exp_major.py", add # before the code at line 74, remove # before the code in line 75;
     add # before the code at line 239, remove # before the code in line 241.
     - Run: "Fig3_exp_dms.py" and "Fig3_exp_major.py"
@@ -90,7 +93,7 @@ This repo is for the detailed cell model CA229. It includes the simulation, anal
 4. Fig 5.
     - Run: "Fig5_exp_DMS.py" or "Fig5_exp_major.py"
     Run the simulation and save json data in folder "Fig5/DMS/" or "Fig5/major/".
-    This step take ~ 1000 seconds on a macbook pro with processor 2.9 GHz Intel Core i9.
+    This step take ~ 1000 seconds on a macbook pro (2018) with processor 2.9 GHz Intel Core i9.
     - Run: "Fig5_ana_DMS.py" or "Fig5_ana_major.py"
     Analyze the traces and generate summary data.
     - Run: "Fig5_plot_DMS.py" or "Fig5_plot_major.py"

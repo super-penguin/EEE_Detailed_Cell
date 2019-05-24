@@ -6,7 +6,7 @@ The orginal model is from
 https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=117207&file=/acker_antic/Model/CA%20229.hoc#tabs-2
 Modified by : Peng Penny Gao <penggao.1987@gmail.com>
 
-Run simulation with NMDA.mod file - DMS model
+Run simulation with NMDAmajor.mod file
 """
 import CA229 as de # from CA229 import *
 import matplotlib.pyplot as plt
@@ -17,7 +17,7 @@ import json
 import itertools
 import time
 # import pdb     # For python debugging
-#from random import *
+# from random import *
 
 h.load_file('stdrun.hoc') # for initialization
 
@@ -39,9 +39,7 @@ def random_beta(low, high, size):
     return time_random
 
 ################### Test the ratio of different repceptors
-class Glu_Stim:
- def __init__(self, TTX = False, Pool1_num = 9, Pool2_num = 9, Beta = 0.067,
-Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
+def Glu_Stim(TTX = False, Pool1_num = 9, Pool2_num = 9, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     """
     Model the Glumate Stimulation.
     Model the Receptors in 2 pools:
@@ -56,18 +54,16 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
         False: default
     Pool1_num: syanptic AMPA/NMDA numbers
     Pool2_num: extrasyanptic NMDA numbers
-    Beta: parameter for NMDA Receptors
-    Cdur: parameter for NMDA Receptors
     Syn_w1: the syanptic weight of AMPA/NMDA receptors in pool1
     Syn_w2: the syanptic weight of AMPA/NMDA receptors in pool2
-    Loc: the stimulation location
+    Loc: the input location for AMPA and NMDA receptors
     -----------
     Outputs:
         Figures: recording from soma and 3 different locations from basal dendrites
         json: soma and dendritc voltage recording and parameters info
     """
-    Cell = de.CA229(HVA_ratio = 0.0, LVA_ratio = 0.0)
-    self.Cell = Cell
+
+    Cell = de.CA229()
     # Can adjust channel conductance ratio here:
     # eg. Cell = CA229(KA_ratio = 0.5)
     ###########################################
@@ -75,18 +71,17 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     data = time.strftime("%m_%d")
     # directory = 'Data_' + data +'/'
     directory_root = 'Fig3/'
-    directory = directory_root + 'DMS/Plot/'
-    # directory = directory_root + 'DMS/Analysis/'
+    directory = directory_root + 'Major/Plot/'
+    # directory = directory_root +'Major/Analysis/'
 
     if (TTX == True):
         Cell.TTX()
-        title = "TTX_Pool1_"+ str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
-            str(Beta) + "_NMDA_Cdur_"+str(Cdur)+ "_Pool1_W_" + str(Syn_w1) + \
-            "_Pool2_W_" + str(Syn_w2) + "_"+ timestr
+        title = "Major_TTX_Pool1_"+ str(Pool1_num) + "_Pool1_W_" + str(Syn_w1) + \
+            "_Pool2_" + str(Pool2_num) + "_Pool2_W_" + str(Syn_w2) + "_" + timestr
+
     else:
-        title = "Pool1_"+ str(Pool1_num) + "_Pool2_" + str(Pool2_num) + "_NMDA_Beta_" + \
-            str(Beta) + "_NMDA_Cdur_"+str(Cdur)+ "_Pool1_W_" + str(Syn_w1) + \
-            "_Pool2_W_" + str(Syn_w2) + "_"+ timestr
+        title = "Major_Pool1_"+ str(Pool1_num) + "_Pool1_W_" + str(Syn_w1) + \
+            "_Pool2_" + str(Pool2_num) + "_Pool2_W_" + str(Syn_w2) + "_" + timestr
 
     ###########################################
     # Adding Pool 1
@@ -95,11 +90,7 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     SynAMPA = []
     nc_AMPA = []
     SynNMDA = []
-    nc_NMDA = []
-    self.SynAMPA = SynAMPA
-    self.nc_AMPA = nc_AMPA
-    self.SynNMDA = SynNMDA
-    self.nc_NMDA = nc_NMDA
+    # nc_NMDA = []
 
     ###########################################
     loc1 = list(np.linspace(Loc[0], Loc[1], Pool1_num))
@@ -108,37 +99,33 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     delay1 = random_2(10, 50 + int(Syn_w1*50), Pool1_num)
     # delay1 = random_beta(10, 50 + int(Syn_w1*50), Pool1_num)
     ns = h.NetStim()
-    self.ns = ns
     ns.interval = 20
     ns.number = 1
     ns.start = 190
     ns.noise = 0
-    ###########################################
+    ##########################################
     for i in range(Pool1_num):
         ###########################
         # Adding AMPA
         SynAMPA.append(h.AMPA(Cell.basal[34](loc1[i])))
         SynAMPA[-1].gmax = 0.05
         nc_AMPA.append(h.NetCon(ns, SynAMPA[i]))
-        nc_AMPA[-1].delay = delay1[i]
+        nc_AMPA[-1].delay = delay1[i] # delay1[i] #uniform(1,20)
         nc_AMPA[-1].weight[0] = Syn_w1
-        ###########################
-        #Adding NMDA
-        SynNMDA.append(h.NMDA(Cell.basal[34](loc1[i])))
-        SynNMDA[-1].gmax = 0.005
-        SynNMDA[-1].Beta = Beta
-        SynNMDA[-1].Cdur = Cdur
-        nc_NMDA.append(h.NetCon(ns, SynNMDA[i]))
-        nc_NMDA[-1].delay = delay1[i]
-        nc_NMDA[-1].weight[0] = Syn_w1
+
+    ###########################
+    #Adding NMDA - Major
+    for i in range(Pool1_num):
+        tempNMDA = h.nmda(Cell.basal[34](loc1[i]))
+        tempNMDA.gmax = 0.005*Syn_w1
+        tempNMDA.onset= delay1[i] + ns.start
+        SynNMDA.append(tempNMDA)
 
     ###########################################
     # Adding Pool 2
     ###########################################
     ExNMDA = []
     nc_ExNMDA = []
-    self.ExNMDA = ExNMDA
-    self.nc_ExNMDA = nc_ExNMDA
 
     loc2 = list(np.linspace(Loc[0], Loc[1], Pool2_num))
 #    delay2 = list(np.linspace(5, 10, Pool2_num))
@@ -147,14 +134,10 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     for i in range(Pool2_num):
         ###########################
         # Adding extrasyanptic NMDA
-        ExNMDA.append(h.NMDA(Cell.basal[34](loc2[i])))
-        ExNMDA[-1].gmax = 0.005
-        ExNMDA[-1].Beta = Beta
-        ExNMDA[-1].Cdur = Cdur
-
-        nc_ExNMDA.append(h.NetCon(ns, ExNMDA[i]))
-        nc_ExNMDA[-1].delay = delay2[i]
-        nc_ExNMDA[-1].weight[0] = Syn_w2
+        tempNMDA2 = h.nmda(Cell.basal[34](loc2[i]))
+        tempNMDA2.gmax = 0.005*Syn_w2
+        tempNMDA2.onset= delay2[i] + ns.start
+        ExNMDA.append(tempNMDA2)
 
     ###########################################
     ### Recording
@@ -201,7 +184,7 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     # plt.xlabel('Time (ms)')
     # plt.title ("Glumate Receptor Activated Plateau Potential")
     #
-    # save(title, directory, ext="png", close=True, verbose=True)
+    # ut.save(title, directory, ext="png", close=True, verbose=True)
 
     #######################
     # Plot the intracelluar calcium concentration
@@ -220,6 +203,7 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     # title1 = "Calcium_" + title
     # ut.save(title1, directory, ext="png", close=True, verbose=True)
 
+
     data = ut.Vividict()
     data['SynAMPA']['num'] = Pool1_num
     data['SynAMPA']['locs'] = loc1
@@ -227,13 +211,13 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     data['SynNMDA']['num'] = Pool1_num
     data['SynNMDA']['locs'] = loc1
     data['SynNMDA']['weight'] = Syn_w1
-    data['SynNMDA']['Beta'] = Beta
-    data['SynNMDA']['Cdur'] = Cdur
+    # data['SynNMDA']['Beta'] = Beta
+    # data['SynNMDA']['Cdur'] = Cdur
     data['ExNMDA']['num'] = Pool2_num
     data['ExNMDA']['locs'] = loc2
     data['ExNMDA']['weight'] = Syn_w2
-    data['ExNMDA']['Beta'] = Beta
-    data['ExNMDA']['Cdur'] = Cdur
+    # data['ExNMDA']['Beta'] = Beta
+    # data['ExNMDA']['Cdur'] = Cdur
 
     data['recording']['time'] = list(t_vec)
     data['recording']['soma']['voltage'] = list(v_vec_soma)
@@ -242,7 +226,6 @@ Cdur = 1, Syn_w1 = 0.01, Syn_w2 = 0.01, Loc = [0.2, 0.6]):
     data['recording']['basal_34']['voltage_0.3'] = list(v_vec_dend3)
     data['recording']['soma']['ica'] = list(cai_soma)
     data['recording']['basal_34']['ica_0.3'] = list(cai_dend)
-
 
     ut.savejson(data, title, directory, ext = "json", verbose = False)
 
@@ -253,15 +236,12 @@ if __name__ == "__main__":
 
     loc = [0.25, 0.6]
     # Plot weight for Fig2
-    weight = [0.8]
-    # weight = [0.1, 0.15, 0.20, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+    weight = [0.1, 0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.65, 0.75]
     # Analysis weight for Fig2
-    # weight = [0.1, 0.2, 0.21, 0.22, 0.23, 0.24, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-
-    # z = Glu_Stim(True, Pool_num, Pool_num, 0.02, 50 + int(100*1), 1, 1, loc)
+    # weight = [0.1, 0.2, 0.3, 0.35, 0.36, 0.37, 0.38, 0.39, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     for w in weight:
-        Pool_num = 20
-        gs = Glu_Stim(False, Pool_num, Pool_num, 0.02, 50 + int(100*w), w, w, loc)
-        # Glu_Stim(True, Pool_num, Pool_num, 0.02, 50 + int(100*w), w, w, loc)
+        Pool_num = 8 + int(20*w)
+        Glu_Stim(False, Pool_num, Pool_num, w, w, loc)
+        # Glu_Stim(True, Pool_num, Pool_num, w, w, loc)
     print("Finished.")
     print("--- %s seconds ---" % (time.time() - start_time))

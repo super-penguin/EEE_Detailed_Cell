@@ -310,12 +310,12 @@ class CA229:
                 gNalin = basalNa - mNa * dist
                 if (gNalin > gNamax):
                     gNalin = gNamax
-                    print "Setting basal Na to maximum ",gNamax,
-                    " at distance ",dist," in basal dendrite ", sec.name()
+                    print ("Setting basal Na to maximum ",gNamax,
+                    " at distance ",dist," in basal dendrite ", sec.name())
                 elif (gNalin < 0):
                     gNalin = 0
-                    print "Setting basal Na to zero at distance ",dist,
-                    " in basal dendrite ",sec.name()
+                    print ("Setting basal Na to zero at distance ",dist,
+                    " in basal dendrite ",sec.name())
                 sec(seg.x).gbar_na = gNalin * self.Na_ratio
 
         # Note: don't add ratio to axon, only modify basal, apical and soma sodium channel conductances
@@ -345,10 +345,10 @@ class CA229:
                 gKVlin = somaKv + mKV * dist
                 if (gKVlin > gKVmax):
                     gKVlin = gKVmax
-                    print "Setting basal GKV to maximum ",gKVmax," at distance ",dist," in basal dendrite",sec.name()
+                    print ("Setting basal GKV to maximum ",gKVmax," at distance ",dist," in basal dendrite",sec.name())
                 elif (gKVlin < 0):
                     gKVlin = 0
-                    print "Setting basal GKV to zero at distance ",dist," in basal dendrite ",sec.name()
+                    print ("Setting basal GKV to zero at distance ",dist," in basal dendrite ",sec.name())
                 sec(seg.x).gbar_kv = gKVlin
 
         for sec in self.axon:
@@ -378,10 +378,10 @@ class CA229:
 
                 if (gkalin > gkamax):
                     gkalin = gkamax
-                    print "Setting GKA to maximum ",gkamax," in basal dendrite",sec.name()
+                    print ("Setting GKA to maximum ",gkamax," in basal dendrite",sec.name())
                 elif (gkalin < 0):
                     gkalin = 0
-                    print "Setting GKA to 0 in basal dendrite",sec.name()
+                    print ("Setting GKA to 0 in basal dendrite",sec.name())
                 sec(seg.x).gkabar_kap = gkalin * ratio/1e4 * self.KA_ratio
                 sec(seg.x).gkabar_kad = gkalin * (1-ratio)/1e4 * self.KA_ratio
 
@@ -523,9 +523,9 @@ class CA229:
         The diam and L of each compartment is determined by 3D structure.
         Same as hoc 3D morphology: CA229.hoc
         """
-        self.soma = [h.Section(name='soma[%d]' % i) for i in xrange(4)]
-        self.apical = [h.Section(name='apical[%d]' % i) for i in xrange(45)]
-        self.basal = [h.Section(name='basal[%d]' % i) for i in xrange(36)]
+        self.soma = [h.Section(name='soma[%d]' % i) for i in range(4)]
+        self.apical = [h.Section(name='apical[%d]' % i) for i in range(45)]
+        self.basal = [h.Section(name='basal[%d]' % i) for i in range(36)]
 
         # Set up the 3d morphology and connection of soma
         h.pt3dclear(sec = self.soma[0])
